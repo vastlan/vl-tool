@@ -72,10 +72,20 @@ public class FileTool {
     return targetPath;
   }
 
-  public static boolean deleteFile(String targetPath, String fileName) {
-    boolean result = false;
+  public static boolean deleteFile(String filePath) {
+    File file = new File(filePath);
 
-    File file = new File(  targetPath + fileName);
+    return deleteFile(file);
+  }
+
+  public static boolean deleteFile(String targetPath, String fileName) {
+    File file = new File(targetPath + fileName);
+
+    return deleteFile(file);
+  }
+
+  public static boolean deleteFile(File file) {
+    boolean result = false;
 
     if (file.exists() && file.isFile()) {
       file.delete();
