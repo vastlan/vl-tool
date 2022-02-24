@@ -24,28 +24,28 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
     this.entityRepository = repository;
   }
 
-  public List<T> getAllEntities() {
+  public List<T> list() {
     return entityRepository.findAll();
   }
 
-  public List<T> createAllEntities(List<T> entityList) {
+  public List<T> createAll(List<T> entityList) {
     entityList.forEach(entity -> recordManipulationDate(entity));
     return entityRepository.saveAllAndFlush(entityList);
   }
 
-  public List<T> updateEntities(List<T> entityList) {
+  public List<T> updateAll(List<T> entityList) {
     entityList.forEach(entity -> recordManipulationDate(entity));
     return entityRepository.saveAllAndFlush(entityList);
   }
 
-  public T getEntity(ID id) {
+  public T get(ID id) {
     Assert.notNull(id, "Entity's id must not be null when select entity");
 
     return entityRepository.findById(id).orElse(null);
   }
 
   @Transactional
-  public T createEntity(T entity) {
+  public T create(T entity) {
     Assert.isNull(entity.getId(), "Entity's id must be null when create entity");
 
     recordManipulationDate(entity);
@@ -53,7 +53,7 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
   }
 
   @Transactional
-  public void deleteEntity(T entity) {
+  public void delete(T entity) {
     Assert.notNull(entity, "cannot delete null entity");
     entityRepository.delete(entity);
   }
@@ -65,7 +65,7 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
   }
 
   @Transactional
-  public void deleteEntity(ID id) {
+  public void delete(ID id) {
     Assert.notNull(id, "Entity's id must not be null when delete entity");
 
     try {
@@ -76,7 +76,7 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
   }
 
   @Transactional
-  public T updateEntity(T entity) {
+  public T update(T entity) {
     Assert.isNull(entity.getId(), "Entity's id must be null when update entity");
 
     recordManipulationDate(entity);
@@ -97,7 +97,7 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
 
   protected void mergeFromDatabase(T sourceEntity) throws IllegalAccessException {
     ID id = (ID) sourceEntity.getId();
-    T targetEntity = getEntity(id);
+    T targetEntity = get(id);
 
     Assert.notNull(targetEntity, "cannot find target entity");
 
@@ -125,10 +125,10 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
   }
 
   private void recordManipulationDate(T entity) {
-    if (entity.getCreateTime() == null) {
+    if (entity.getCreatedTime() == null) {
       entity.setCreatedTime(DateTool.getCurrentDateTimeOfDate());
     }
 
-    entity.setModifiedTime(DateTool.getCurrentDateTimeOfDate());
+    entity.setLastModifiedTime(DateTool.getCurrentDateTimeOfDate());
   }
 }
