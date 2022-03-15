@@ -1,5 +1,6 @@
 package com.vast.vl_tool.time;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -124,6 +125,14 @@ public class DateTool {
 
   public static String getStringOfYMD(Date date, String pattern) {
     return parseToLocalDate(date).format(DateTimeFormatter.ofPattern(pattern));
+  }
+
+  public static String format(Date date) {
+    return format(date, "yyyy-MM-dd hh:mm:dd");
+  }
+
+  public static String format(Date date, String pattern) {
+    return parseToLocalDateTime(date).format(DateTimeFormatter.ofPattern(pattern));
   }
 
   /**
