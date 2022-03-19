@@ -13,7 +13,7 @@ import java.util.UUID;
 
 /**
  * @author vastlan
- * @description 字符串UUID主键
+ * @description 字符串UUID主键实体
  * @created 2022/2/24 16:25
  */
 
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class UUIDStringEntity extends EntityBase<String> {
+public class UUIDStrBaseEntity extends EntityBase<String> {
 
   @Id
   @GenericGenerator(name = "uuid-String-generator", strategy = "uuid")

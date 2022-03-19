@@ -13,7 +13,7 @@ import java.util.UUID;
 
 /**
  * @author vastlan
- * @description 字节码UUID主键
+ * @description 字节码UUID主键实体
  * @created 2022/2/24 16:25
  */
 
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class UUIDByteEntity extends EntityBase<UUID> {
+public class UUIDByteBaseEntity extends EntityBase<UUID> {
 
   @Id
   @GenericGenerator(name = "uuid-byte-generator", strategy = "uuid2")

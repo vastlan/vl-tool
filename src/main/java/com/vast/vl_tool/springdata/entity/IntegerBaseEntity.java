@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * @author vastlan
- * @description 自增主键
+ * @description 自增主键实体
  * @created 2022/2/24 16:25
  */
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class IdentityEntity extends EntityBase<Integer> {
+public class IntegerBaseEntity extends EntityBase<Integer> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
