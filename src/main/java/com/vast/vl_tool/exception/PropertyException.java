@@ -5,12 +5,19 @@ package com.vast.vl_tool.exception;
  * @description
  * @created 2022/2/24 17:39
  */
-public class PropertyException extends RuntimeException {
+public class PropertyException extends ExceptionBase {
+  public final static String PROPERTY_ERROR_MESSAGE = "属性错误";
+
   public PropertyException() {
-    super("属性错误");
+    super(PROPERTY_ERROR_MESSAGE);
   }
 
-  public PropertyException(String errMsg) {
-    super(errMsg);
+  public PropertyException(Object message) {
+    super(message);
   }
+
+  public PropertyException(Object message, Object errorCode) {
+    super(message, errorCode);
+  }
+
 }

@@ -1,6 +1,5 @@
 package com.vast.vl_tool.http;
 
-import com.vast.vl_tool.exception.ResultError;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,8 +41,8 @@ public class ResponseResult<T> implements Serializable {
     this(0, exception.getMessage(), data);
   }
 
-  public ResponseResult(ResultError errorCode) {
-    this(0, errorCode.getMessage(), (T) errorCode.getCode());
+  public ResponseResult(Object errorMessage, Object errorCode) {
+    this(0, String.valueOf(errorMessage), (T) errorCode);
   }
 
   public static <T> ResponseResult<T> success() {
@@ -70,11 +69,7 @@ public class ResponseResult<T> implements Serializable {
     return new ResponseResult<>(0, exception.getMessage(), data);
   }
 
-  public static <T> ResponseResult<T> fail(ResultError errorCode) {
-    return new ResponseResult<>(0, errorCode.getMessage(), (T) errorCode.getCode());
-  }
-
-  public static <T> ResponseResult<T> fail(ResultError errorCode, String message) {
-    return new ResponseResult<>(0, message, (T) errorCode.getCode());
+  public static <T> ResponseResult<T> fail(Object errorMessage, Object errorCode) {
+    return new ResponseResult<>(0, String.valueOf(errorMessage), (T) errorCode);
   }
 }
