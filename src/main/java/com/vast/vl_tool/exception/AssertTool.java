@@ -7,19 +7,20 @@ package com.vast.vl_tool.exception;
  */
 public class AssertTool {
 
-  public static void isBlank(Object param, String msg) {
-    isBlank(param, new PropertyException(msg));
+  public static void isNotNull(Object param, String msg) {
+    isNotNull(param, new PropertyException(msg));
   }
 
-  public static void isBlank(Object param, ExceptionBase exceptionBase) {
+  public static void isNotNull(Object param, RuntimeException runtimeException) {
      if (param == null) {
-       throw exceptionBase;
+       throw runtimeException;
      }
   }
 
-  public static void isBlank(ExceptionBase exceptionBase, Object... params) {
+  public static void isNotNull(RuntimeException runtimeException, Object... params) {
     for (Object param : params) {
-      isBlank(param, exceptionBase);
+      isNotNull(param, runtimeException);
     }
   }
+
 }
