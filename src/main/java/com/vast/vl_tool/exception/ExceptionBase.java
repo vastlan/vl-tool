@@ -15,18 +15,18 @@ public abstract class ExceptionBase extends RuntimeException {
   public final static String UNKNOWN_ERROR_MESSAGE = "未知错误";
   public final static Integer UNKNOWN_ERROR_CODE = 999;
 
-  private Object errorCode;
+  private Integer errorCode;
 
   public ExceptionBase() {
     this(UNKNOWN_ERROR_MESSAGE);
   }
 
-  public ExceptionBase(Object message) {
+  public ExceptionBase(String message) {
     super(String.valueOf(message));
     this.setErrorCode(UNKNOWN_ERROR_CODE);
   }
 
-  public ExceptionBase(Object message, Object errorCode) {
+  public ExceptionBase(String message, Integer errorCode) {
     this(message);
     this.setErrorCode(errorCode);
   }

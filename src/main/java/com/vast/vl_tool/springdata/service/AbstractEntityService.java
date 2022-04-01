@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import javax.xml.bind.PropertyException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

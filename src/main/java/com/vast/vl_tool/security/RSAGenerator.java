@@ -15,7 +15,7 @@ import java.util.Base64;
 
 /**
  * @author vastlan
- * @description
+ * @description RSA 加解密生产器
  * @created 2022/2/24 17:36
  */
 
@@ -65,7 +65,7 @@ public class RSAGenerator {
   }
 
   public static String getPrivateKey() {
-    return base64PublicKey;
+    return base64PrivateKey;
   }
 
   /**

@@ -1,4 +1,4 @@
-package com.vast.vl_tool.http;
+package com.vast.vl_tool.http.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

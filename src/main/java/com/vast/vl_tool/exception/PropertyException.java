@@ -12,11 +12,11 @@ public class PropertyException extends ExceptionBase {
     super(PROPERTY_ERROR_MESSAGE);
   }
 
-  public PropertyException(Object message) {
+  public PropertyException(String message) {
     super(message);
   }
 
-  public PropertyException(Object message, Object errorCode) {
+  public PropertyException(String message, Integer errorCode) {
     super(message, errorCode);
   }
 
