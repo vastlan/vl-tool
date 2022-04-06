@@ -1,5 +1,7 @@
 package com.vast.vl_tool.exception;
 
+import org.springframework.lang.Nullable;
+
 /**
  * @author vastlan
  * @description
@@ -22,5 +24,4 @@ public class AssertTool {
       isNotNull(param, runtimeException);
     }
   }
-
 }

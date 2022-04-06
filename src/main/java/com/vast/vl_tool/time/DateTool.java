@@ -42,7 +42,7 @@ public class DateTool {
   public static String getFormattedCurrentDateTime(String pattern) {
 
     if (pattern == null) {
-      pattern = "yyyy-MM-dd hh:mm:ss";
+      pattern = "yyyy-MM-dd HH:mm:ss";
     }
 
     return getCurrentDateTime().format(DateTimeFormatter.ofPattern(pattern));
