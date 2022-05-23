@@ -29,7 +29,11 @@ public class RSAGenerator {
 
   private static final String base64PrivateKey;
 
-  public static final String base64PublicKey;
+  private static final String base64PublicKey;
+
+  private static final RSAPublicKey publicKey;
+
+  private static final RSAPrivateKey privateKey;
 
   static {
     try {
@@ -43,8 +47,8 @@ public class RSAGenerator {
       keyPair = keyPairGenerator.generateKeyPair();
 
       // 通过对象 keyPair 获取 RSA 公秘钥对象
-      RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-      RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+      publicKey = (RSAPublicKey) keyPair.getPublic();
+      privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
       byte[] publicKeyBytes = publicKey.getEncoded();
       byte[] privateKeyBytes = privateKey.getEncoded();
@@ -55,9 +59,17 @@ public class RSAGenerator {
       base64PrivateKey = encoder.encodeToString(privateKeyBytes);
 
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      e.printStackTrace();
       throw new PropertyException("RSAGenerator 加解密异常");
     }
+  }
+
+  public static RSAPublicKey rsaPublicKey() {
+    return publicKey;
+  }
+
+  public static RSAPrivateKey rsaPrivateKey() {
+    return privateKey;
   }
 
   public static String getPublicKey() {
@@ -92,7 +104,7 @@ public class RSAGenerator {
       return Base64.getEncoder().encodeToString(finalBytes);
 
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      e.printStackTrace();
       throw new PropertyException("RSAGenerator 加密异常");
     }
   }
@@ -121,7 +133,7 @@ public class RSAGenerator {
       return new String(finalBytes, StandardCharsets.UTF_8);
 
     } catch (Exception e) {
-      System.err.println(e.getMessage());
+      e.printStackTrace();
       throw new PropertyException("RSAGenerator 解密异常");
     }
 

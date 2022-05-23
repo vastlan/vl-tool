@@ -10,7 +10,7 @@ import java.util.List;
  * @created 2022/1/21 15:33
  */
 
-public interface ServiceBase<T extends EntityBase<ID>, ID> {
+public interface EntityServiceBase<T extends EntityBase<ID>, ID> {
   List<T> list();
 
   List<T> createAll(List<T> entityList);

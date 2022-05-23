@@ -1,9 +1,13 @@
 package com.vast.vl_tool.time;
 
+import com.vast.vl_tool.regex.RegexTool;
+
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author vastlan
@@ -11,22 +15,22 @@ import java.util.Date;
  * @created 2022/1/21 11:52
  */
 public class DateTool {
-  // 1619430384530
+  /** 1619430384530 */
   public static long getCurrentTimeMillis() {
     return System.currentTimeMillis();
   }
 
-  // 2021-04-26
+  /** 2021-04-26 */
   public static LocalDate getCurrentDate() {
     return LocalDate.now();
   }
 
-  // 17:46:24.559300900
+  /** 17:46:24.559300900 */
   public static LocalTime getCurrentTime() {
     return LocalTime.now();
   }
 
-  // 2021-04-26T17:46:24.559300900
+  /** 2021-04-26T17:46:24.559300900 */
   public static LocalDateTime getCurrentDateTime() {
     return LocalDateTime.now();
   }
@@ -48,41 +52,42 @@ public class DateTool {
     return getCurrentDateTime().format(DateTimeFormatter.ofPattern(pattern));
   }
 
-  // 2021
+  /** 2021 */
   public static int getCurrentYear() {
     return getCurrentDateTime().getYear();
   }
 
-  // APRIL 对象
+  /** APRIL 对象 */
   public static Month getCurrentMoth() {
     return getCurrentDateTime().getMonth();
   }
 
-  // 4
+  /** 4 */
   public static int getCurrentMothValue() {
     return getCurrentMoth().getValue();
   }
 
-  // 一个月的第几天 - 26
+  /** 一个月的第几天 - 26 */
   public static int getCurrentDayOfMonth() {
     return getCurrentDateTime().getDayOfMonth();
   }
 
-  // 一年第几天 - 116
+  /** 一年第几天 - 116 */
   public static int getCurrentDayOfYear() {
     return getCurrentDateTime().getDayOfYear();
   }
 
-  // MONDAY 对象
+  /** MONDAY 对象 */
   public static DayOfWeek getCurrentDayOfWeek() {
     return getCurrentDateTime().getDayOfWeek();
   }
 
-  // 一星期的第几天 - 1
+  /** 一星期的第几天 - 1 */
   public static int getCurrentDayOfWeekValue() {
     return getCurrentDayOfWeek().getValue();
   }
 
+  /** 获取系统当前 hour */
   public static int getCurrentHour() {
     return getCurrentDateTime().getHour();
   }
@@ -155,4 +160,62 @@ public class DateTool {
   public static Date parseToDate(LocalDateTime localDateTime) {
     return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
   }
+
+  public static Date parseToDate(String dateStr) {
+    return parseToDate(LocalDateTime.parse(formatDateStr(dateStr)));
+  }
+
+  public static Date parseToDate(String dateStr, LocalTime localTime) {
+    return parseToDate(LocalDateTime.of(LocalDate.parse(formatDateStrToYMD(dateStr)), localTime));
+  }
+
+  public static String formatDateStr(String dateStr) {
+
+    // 匹配 yyyy-MM-ddTHH:mm:ss、yyyy/MM/ddTHH:mm:ss
+    if (RegexTool.isMatches("\\d{4}(\\-|\\/)\\d{2}\\1\\d{2}[T]\\d{2}(\\:)\\d{2}(\\:)\\d{2}", dateStr)) {
+      if (dateStr.contains("/")) {
+        dateStr = dateStr.replaceAll("/", "-");
+      }
+
+      return dateStr;
+    }
+
+    // 匹配 yyyy-MM-dd HH:mm:ss、yyyy/MM/dd HH:mm:ss
+    if (RegexTool.isMatchesDate(dateStr)) {
+      String[] arr = dateStr.split(" ");
+
+      if (arr[0].contains("/")) {
+        arr[0] = arr[0].replaceAll("/", "-");
+      }
+
+      return String.format("%sT%s", arr[0], arr[1]);
+    }
+
+    // 匹配 yyyy-MM-dd、yyyy/MM/dd
+    // \\1：匹配类型为 (\-|\/|) 的结果
+    if (RegexTool.isMatchesDateOfYML(dateStr)) {
+      if (dateStr.contains("/")) {
+        dateStr = dateStr.replaceAll("/", "-");
+      }
+
+      return dateStr + "T00:00:00";
+    }
+
+    throw new IllegalArgumentException("dateStr 非法参数格式；格式如下：yyyy-MM-ddTHH:mm:ss、yyyy/MM/ddTHH:mm:ss、yyyy-MM-dd HH:mm:ss、yyyy/MM/dd HH:mm:ss、yyyy-MM-dd、yyyy/MM/dd");
+  }
+
+  public static String formatDateStrToYMD(String dateStr) {
+    // 匹配 yyyy-MM-dd、yyyy/MM/dd
+    // \\1：匹配类型为 (\-|\/|) 的结果
+    if (RegexTool.isMatchesDateOfYML(dateStr)) {
+      if (dateStr.contains("/")) {
+        dateStr = dateStr.replaceAll("/", "-");
+      }
+
+      return dateStr;
+    }
+
+    throw new IllegalArgumentException("dateStr 非法参数格式；格式如下：yyyy-MM-dd、yyyy/MM/dd");
+  }
+
 }

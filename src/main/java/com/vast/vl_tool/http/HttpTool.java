@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vast.vl_tool.http.response.ResponseResult;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.ServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -143,5 +146,10 @@ public class HttpTool {
     ResponseEntity<String> responseEntity = REST_TEMPLATE.exchange(url, httpMethod, httpEntity, String.class);
 
     return responseEntity;
+  }
+
+  public static void response(ServletResponse response, Object object) throws IOException {
+    response.setContentType(String.format("%s;charset=UTF-8", MediaType.APPLICATION_JSON_VALUE));
+    OBJECT_MAPPER.writeValue(response.getWriter(), object);
   }
 }

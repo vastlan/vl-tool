@@ -18,10 +18,10 @@ import java.util.List;
  * @created 2021-06-17 15:22
  */
 
-public abstract class AbstractEntityService<T extends EntityBase, ID, R extends JpaRepository<T, ID>> {
+public abstract class AbstractEntityServiceBase<T extends EntityBase, ID, R extends JpaRepository<T, ID>> {
   protected final R entityRepository;
 
-  public AbstractEntityService(R repository) {
+  public AbstractEntityServiceBase(R repository) {
     this.entityRepository = repository;
   }
 
@@ -78,7 +78,7 @@ public abstract class AbstractEntityService<T extends EntityBase, ID, R extends 
 
   @Transactional
   public T update(T entity) {
-    Assert.isNull(entity.getId(), "Entity's id must be null when update entity");
+    Assert.notNull(entity.getId(), "Entity's id must not be null when update entity");
 
     recordManipulationDate(entity);
 
