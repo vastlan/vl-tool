@@ -4,6 +4,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.hibernate.query.criteria.internal.PathSource;
+import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 /**
@@ -237,5 +241,10 @@ public class FileTool {
     }
 
     return fileSource;
+  }
+
+  public static PathResource transformToPathSource(String absolutePath) {
+    Path path = Paths.get(absolutePath);
+    return new PathResource(path);
   }
 }

@@ -5,12 +5,21 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vast.vl_tool.http.response.ResponseResult;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -151,5 +160,37 @@ public class HttpTool {
   public static void response(ServletResponse response, Object object) throws IOException {
     response.setContentType(String.format("%s;charset=UTF-8", MediaType.APPLICATION_JSON_VALUE));
     OBJECT_MAPPER.writeValue(response.getWriter(), object);
+  }
+
+  /**
+   * 将文件源内容以流的形式返回
+   * @param pathResource
+   * @param request
+   * @param response
+   * @return
+   */
+  public static ResponseEntity<AbstractResource> responseFileStream(PathResource pathResource, HttpServletRequest request, HttpServletResponse response) {
+    if (!pathResource.exists()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+
+    String fileName = pathResource.getFilename();
+    String encodeFileName = null;
+
+    try {
+      encodeFileName = URLEncoder.encode(fileName, "UTF-8");
+
+      httpHeaders.add("Content-Disposition", "inline; fileName=" + encodeFileName);
+      httpHeaders.add("Content-Type", Files.probeContentType(Paths.get(fileName)));
+
+      return ResponseEntity.ok().lastModified(pathResource.lastModified()).headers(httpHeaders).body(pathResource);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return ResponseEntity.noContent().build();
   }
 }

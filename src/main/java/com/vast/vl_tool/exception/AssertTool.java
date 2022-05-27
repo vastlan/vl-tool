@@ -9,19 +9,25 @@ import org.springframework.lang.Nullable;
  */
 public class AssertTool {
 
-  public static void isNotNull(Object param, String msg) {
-    isNotNull(param, new PropertyException(msg));
+  public static void isNull(Object param, String msg) {
+    isNull(param, new PropertyException(msg));
   }
 
-  public static void isNotNull(Object param, RuntimeException runtimeException) {
+  public static void isNull(Object param, RuntimeException runtimeException) {
      if (param == null) {
        throw runtimeException;
      }
   }
 
-  public static void isNotNull(RuntimeException runtimeException, Object... params) {
+  public static void isNull(RuntimeException runtimeException, Object... params) {
     for (Object param : params) {
-      isNotNull(param, runtimeException);
+      isNull(param, runtimeException);
+    }
+  }
+
+  public static void isTrue(Boolean option, RuntimeException runtimeException) {
+    if (option) {
+      throw runtimeException;
     }
   }
 }
