@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -12,12 +13,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author vastlan
@@ -44,7 +49,7 @@ public class FileTool {
 
   public static boolean isVideo(String fileName) {
     String[] videoSuffixArray = new String[] {
-      "map4", "flv", "wmv"
+      "mp4", "flv", "wmv"
     };
 
     return Arrays.stream(videoSuffixArray)
@@ -100,8 +105,23 @@ public class FileTool {
     return result;
   }
 
+  /**
+   *
+   * @param targetPath
+   * @param fileName 文件名.拓展名
+   * @return
+   * @throws IOException
+   */
   public static ResponseEntity<byte[]> downloadFile(String targetPath, String fileName) throws IOException {
     File file = new File( targetPath + fileName);
+    return downloadFile(file, fileName);
+  }
+
+  public static ResponseEntity<byte[]> downloadFile(File file, String fileName) throws IOException {
+    if (!file.exists()) {
+      throw new FileNotFoundException("找不到指定文件");
+    }
+
     InputStream inputStream= new FileInputStream(file);
     byte[] body = new byte[inputStream.available()];
 
@@ -110,6 +130,36 @@ public class FileTool {
     HttpHeaders headers = new HttpHeaders();
     headers.add ( "Content-Disposition","attachment;filename=" + newFileName);
     ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+
+    return responseEntity;
+  }
+
+  public static ResponseEntity<byte[]> downloadFileWithZip(List<File> fileList, String folderName) throws IOException {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+    byte[] bytes = new byte[1024];
+
+    for (File file : fileList) {
+      try(FileInputStream fileInputStream = new FileInputStream(file)) {
+        zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+
+        int len;
+
+        while ((len = fileInputStream.read(bytes) ) > 0) {
+          zipOutputStream.write(bytes, 0, len);
+        }
+      }
+
+      zipOutputStream.closeEntry();
+    }
+
+    String newFileName = new String(folderName.getBytes("UTF-8"), "ISO-8859-1");
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add ( "Content-Disposition","attachment;filename=" + folderName + ".zip");
+    ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
+
+    zipOutputStream.close();
 
     return responseEntity;
   }
