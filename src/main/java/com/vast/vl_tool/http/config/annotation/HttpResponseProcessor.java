@@ -5,12 +5,11 @@ import com.vast.vl_tool.json.JsonTool;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -26,10 +25,19 @@ public class HttpResponseProcessor {
 
   private String mediaTypeValue = String.format("%s;charset=UTF-8", MediaType.APPLICATION_JSON_VALUE);
 
-  private ServletResponse response;
+  private HttpStatus status = HttpStatus.OK;
+
+  private ServletResponse servletResponse;
 
   public HttpResponseProcessor(ServletResponse response) {
-    this.response = response;
+    this.servletResponse = response;
+  }
+
+  public HttpResponseProcessor status(HttpStatus httpStatus) {
+    ((HttpServletResponse) servletResponse).setStatus(status.value());
+    this.status = httpStatus;
+
+    return this;
   }
 
   public HttpResponseProcessor mediaType(String mediaType) {
@@ -43,11 +51,13 @@ public class HttpResponseProcessor {
    * @throws IOException
    */
   public void write(Object object) throws IOException {
-    AssertTool.isNull(response, new NullPointerException("ServletResponse 不能为空"));
-    JsonTool.OBJECT_MAPPER.writeValue(response.getWriter(), object);
+    AssertTool.isNull(servletResponse, new NullPointerException("ServletResponse 不能为空"));
+    JsonTool.OBJECT_MAPPER.writeValue(servletResponse.getWriter(), object);
   }
 
-  public ResponseEntity<AbstractResource> writeStream(PathResource pathResource) {
+  public ResponseEntity<AbstractResource> writeFileStream(PathResource pathResource) {
+    AssertTool.isNull(servletResponse, new NullPointerException("ServletResponse 不能为空"));
+
     if (!pathResource.exists()) {
       return ResponseEntity.notFound().build();
     }

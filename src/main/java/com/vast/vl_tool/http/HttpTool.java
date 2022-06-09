@@ -45,6 +45,7 @@ public class HttpTool {
   /**
    *  HttpTool.createResponse(xxx)
    *  [.mediaType(xxx)]
+   *  [.status(HttpStatus)]
    *  .write(xxx)
    * @param response
    * @return
