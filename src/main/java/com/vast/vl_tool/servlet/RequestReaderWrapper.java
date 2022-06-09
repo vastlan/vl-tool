@@ -20,7 +20,7 @@ public class RequestReaderWrapper extends HttpServletRequestWrapper {
 
   public RequestReaderWrapper(HttpServletRequest request) {
     super(request);
-    this.rbBytes = HttpRequestTool.getRequestBodyToBytes(request);
+    this.rbBytes = HttpServletRequestTool.getRequestBodyToBytes(request);
   }
 
   @Override

@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
  * @description
  * @created 2022/1/21 11:55
  */
-public class HttpRequestTool {
+public class HttpServletRequestTool {
 
   public static String getRequestBodyToString(HttpServletRequest request) {
 

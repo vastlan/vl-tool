@@ -64,19 +64,19 @@ public class RSAGenerator {
     }
   }
 
-  public static RSAPublicKey rsaPublicKey() {
+  public static RSAPublicKey getPublicKey() {
     return publicKey;
   }
 
-  public static RSAPrivateKey rsaPrivateKey() {
+  public static RSAPrivateKey getPrivateKey() {
     return privateKey;
   }
 
-  public static String getPublicKey() {
+  public static String getBase64PublicKey() {
     return base64PublicKey;
   }
 
-  public static String getPrivateKey() {
+  public static String getBase64PrivateKey() {
     return base64PrivateKey;
   }
 

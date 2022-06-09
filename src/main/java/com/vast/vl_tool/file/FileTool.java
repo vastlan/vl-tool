@@ -113,35 +113,35 @@ public class FileTool {
    * @throws IOException
    */
   public static ResponseEntity<byte[]> downloadFile(String targetPath, String fileName) throws IOException {
-    File file = new File( targetPath + fileName);
-    return downloadFile(file, fileName);
+    return downloadFile(FileBody.create(targetPath, fileName));
   }
 
-  public static ResponseEntity<byte[]> downloadFile(File file, String fileName) throws IOException {
-    if (!file.exists()) {
+  public static ResponseEntity<byte[]> downloadFile(FileBody fileBody) throws IOException {
+    if (!fileBody.existFile()) {
       throw new FileNotFoundException("找不到指定文件");
     }
 
-    InputStream inputStream= new FileInputStream(file);
+    InputStream inputStream= new FileInputStream(fileBody.getFile());
     byte[] body = new byte[inputStream.available()];
 
-    String newFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+    String newFileName = new String(fileBody.getFileName().getBytes("UTF-8"), "ISO-8859-1");
 
     HttpHeaders headers = new HttpHeaders();
     headers.add ( "Content-Disposition","attachment;filename=" + newFileName);
-    ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
+    ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(body, headers, HttpStatus.OK);
 
     return responseEntity;
   }
 
-  public static ResponseEntity<byte[]> downloadFileWithZip(List<File> fileList, String folderName) throws IOException {
+  public static ResponseEntity<byte[]> downloadFileWithZip(List<FileBody> fileList, String zipFileName) throws IOException {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+
     byte[] bytes = new byte[1024];
 
-    for (File file : fileList) {
-      try(FileInputStream fileInputStream = new FileInputStream(file)) {
-        zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+    for (FileBody fileBody : fileList) {
+      try(FileInputStream fileInputStream = new FileInputStream(fileBody.getFile())) {
+        zipOutputStream.putNextEntry(new ZipEntry(fileBody.getFileName()));
 
         int len;
 
@@ -153,11 +153,11 @@ public class FileTool {
       zipOutputStream.closeEntry();
     }
 
-    String newFileName = new String(folderName.getBytes("UTF-8"), "ISO-8859-1");
+    String newFileName = new String(zipFileName.getBytes("UTF-8"), "ISO-8859-1");
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add ( "Content-Disposition","attachment;filename=" + folderName + ".zip");
-    ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
+    headers.add ( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
+    ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
 
     zipOutputStream.close();
 

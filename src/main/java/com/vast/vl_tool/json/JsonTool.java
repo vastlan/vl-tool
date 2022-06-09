@@ -14,28 +14,19 @@ import java.util.Map;
 public class JsonTool {
   public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-  public static String toJSONString(Object object) {
-    try {
-      return OBJECT_MAPPER.writeValueAsString(object);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("json解析失败", e);
-    }
-  }
-
-  public static Map<String, Object> pares(String jsonString) {
+  public static Map<String, Object> formatToMap(String jsonString) {
     try {
       return OBJECT_MAPPER.readValue(jsonString, Map.class);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("json解析失败", e);
+      throw new RuntimeException("json 格式化成 map 失败", e);
     }
   }
 
-  public static String toJsonString(Map<?, ?> map) {
-    ObjectMapper objectMapper = new ObjectMapper();
+  public static String parseToJSONString(Object obj) {
     try {
-      return objectMapper.writeValueAsString(map);
+      return OBJECT_MAPPER.writeValueAsString(obj);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("json解析失败", e);
+      throw new RuntimeException("json 解析失败", e);
     }
   }
 }

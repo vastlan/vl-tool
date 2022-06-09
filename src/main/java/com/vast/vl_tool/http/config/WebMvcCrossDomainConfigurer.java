@@ -1,4 +1,4 @@
-package com.vast.vl_tool.http;
+package com.vast.vl_tool.http.config;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

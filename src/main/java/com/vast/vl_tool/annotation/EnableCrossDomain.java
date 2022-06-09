@@ -1,6 +1,6 @@
 package com.vast.vl_tool.annotation;
 
-import com.vast.vl_tool.http.WebMvcCrossDomainConfigurer;
+import com.vast.vl_tool.http.config.WebMvcCrossDomainConfigurer;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
