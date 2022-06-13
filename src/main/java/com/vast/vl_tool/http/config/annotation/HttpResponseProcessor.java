@@ -52,6 +52,7 @@ public class HttpResponseProcessor {
    */
   public void write(Object object) throws IOException {
     AssertTool.isNull(servletResponse, new NullPointerException("ServletResponse 不能为空"));
+    servletResponse.setContentType(mediaTypeValue);
     JsonTool.OBJECT_MAPPER.writeValue(servletResponse.getWriter(), object);
   }
 

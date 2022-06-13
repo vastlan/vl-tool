@@ -1,4 +1,4 @@
-package com.vast.vl_tool.annotation;
+package com.vast.vl_tool.threadpool.config.annotation;
 
 import com.vast.vl_tool.threadpool.ThreadPoolConfigurer;
 import org.springframework.context.annotation.Import;

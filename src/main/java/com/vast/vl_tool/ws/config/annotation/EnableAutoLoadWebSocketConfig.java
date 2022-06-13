@@ -1,4 +1,4 @@
-package com.vast.vl_tool.annotation;
+package com.vast.vl_tool.ws.config.annotation;
 
 import com.vast.vl_tool.ws.WebSocketConfigurer;
 import org.springframework.context.annotation.Import;

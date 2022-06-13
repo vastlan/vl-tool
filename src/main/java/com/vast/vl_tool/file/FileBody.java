@@ -2,6 +2,7 @@ package com.vast.vl_tool.file;
 
 import lombok.*;
 
+import javax.persistence.Transient;
 import java.io.File;
 
 /**
@@ -21,21 +22,28 @@ public class FileBody {
 
   private String fileName;
 
-  public static FileBody create(String targetPath) {
-    File file = new File(targetPath);
-    return new FileBody(file, file.getName());
+  private String fileAbsolutePath;
+
+  public static FileBody create(String fileAbsolutePath) {
+    File file = new File(fileAbsolutePath);
+    return new FileBody(file, file.getName(), file.getAbsolutePath());
   }
 
   public static FileBody create(File file) {
-    return new FileBody(file, file.getName());
+    return new FileBody(file, file.getName(), file.getAbsolutePath());
   }
 
-  public static FileBody create(String targetPath, String fileName) {
-    File file = new File(targetPath + fileName);
-    return new FileBody(file, fileName);
+  public static FileBody create(String folderRelativePath, String fileName) {
+    String path = folderRelativePath + "/" + fileName;
+    File file = new File(path);
+    return new FileBody(file, fileName, path);
   }
 
   public boolean existFile() {
     return file.exists();
+  }
+
+  public boolean notExistAndIsFile() {
+    return !existFile() && file.isFile();
   }
 }
