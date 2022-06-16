@@ -266,12 +266,10 @@ public class FileProcessor {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isTrue(!FileTool.isVideo(fileBody.getFileName()), new IllegalArgumentException("非视频文件异常"));
 
-    FileBody thumbnailFileBody = null;
-
     FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(fileBody.getFile());
 
     if (videoGrabber == null) {
-      return thumbnailFileBody;
+      return null;
     }
 
     try {
@@ -284,7 +282,7 @@ public class FileProcessor {
 
       while (currentFrameNumber < videoTotalFrameNumber) {
         if (currentFrameNumber >= videoTotalFrameNumber) {
-          return thumbnailFileBody;
+          return null;
         }
 
         if (currentFrameNumber < frameNumber) {
@@ -312,9 +310,11 @@ public class FileProcessor {
         .getGraphics()
         .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, Image.SCALE_SMOOTH), 0, 0, null);
 
-      thumbnailFileBody = FileBody.create(targetAbsolutePath);
+      FileBody thumbnailFileBody = path(targetAbsolutePath).createFile();
 
       ImageIO.write(thumbnailBufferedImage, "jpg", thumbnailFileBody.getFile());
+
+      return thumbnailFileBody;
 
     } catch (FFmpegFrameGrabber.Exception e) {
       e.printStackTrace();
@@ -330,7 +330,7 @@ public class FileProcessor {
       }
     }
 
-    return thumbnailFileBody;
+    return null;
   }
 
 }
