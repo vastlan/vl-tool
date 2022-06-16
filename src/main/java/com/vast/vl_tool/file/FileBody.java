@@ -44,6 +44,6 @@ public class FileBody {
   }
 
   public boolean notExistAndIsFile() {
-    return !existFile() && file.isFile();
+    return !existFile() && FileTool.isFile(file);
   }
 }

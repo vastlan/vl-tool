@@ -2,7 +2,9 @@ package com.vast.vl_tool.file;
 
 import com.vast.vl_tool.file.config.annotation.FileProcessor;
 import org.springframework.core.io.PathResource;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -41,6 +43,15 @@ public class FileTool {
       .orElse(null) != null;
   }
 
+  public static Boolean isFile(File file) {
+    if (file.exists()) {
+      return file.isFile();
+    }
+
+    String fileName = file.getName();
+    return StringUtils.hasLength(fileName) && fileName.indexOf(".") != -1;
+  }
+
 
   /**
    * FileTool
@@ -57,5 +68,4 @@ public class FileTool {
     Path path = Paths.get(absolutePath);
     return new PathResource(path);
   }
-
 }

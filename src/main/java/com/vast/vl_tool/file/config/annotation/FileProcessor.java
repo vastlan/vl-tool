@@ -106,7 +106,7 @@ public class FileProcessor {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
 
     File fileSource = fileBody.getFile();
-    AssertTool.isTrue(!fileSource.isFile(), new IllegalArgumentException("非文件路径参数异常"));
+    AssertTool.isTrue(!FileTool.isFile(fileBody.getFile()), new IllegalArgumentException("非文件路径参数异常"));
 
     File parentFolder = createFolder(fileSource.getParentFile());
 
@@ -131,7 +131,7 @@ public class FileProcessor {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
 
     File fileSource = fileBody.getFile();
-    AssertTool.isTrue(fileSource.isFile(), new IllegalArgumentException("非文件夹路径参数异常"));
+    AssertTool.isTrue(FileTool.isFile(fileBody.getFile()), new IllegalArgumentException("非文件夹路径参数异常"));
 
     return createFolder(fileSource);
   }
