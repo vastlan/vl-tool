@@ -1,13 +1,30 @@
 package com.vast.vl_tool.file;
 
 import com.vast.vl_tool.file.config.annotation.FileProcessor;
+import com.vast.vl_tool.http.HttpTool;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import okhttp3.ResponseBody;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.bytedeco.libfreenect._freenect_context;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.core.io.PathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author vastlan
@@ -20,6 +37,9 @@ public class FileTool {
    * 默认截取视频帧数
    */
   private final static int DEFAULT_CUT_OUT_VIDEO_FRAME_NUMBER = 5;
+
+  private final static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
+  private static final String IMAGE_HOST = "https://ssl-thumb.720static.com/";
 
   public static boolean isPicture(String fileName) {
     String[] pictureSuffixArray = new String[] {
@@ -67,5 +87,102 @@ public class FileTool {
   public static PathResource transformToPathSource(String absolutePath) {
     Path path = Paths.get(absolutePath);
     return new PathResource(path);
+  }
+
+  public static FileBody grabThumbnailFor720(String url, String targetFolderPath, String fileName) {
+    String thumbUrl;
+    Integer sceneId;
+
+    try {
+      Document doc = Jsoup.connect(url).get();
+
+      String scriptContent =
+        doc
+          .getElementsByClass("script").get(0)
+          .getElementsByTag("script").get(0)
+          .childNodes().get(0)
+          .toString()
+          .replace("window.", "var");
+
+      String query = new URL(url).getQuery();
+      sceneId = query != null ? Integer.valueOf(query.split("=")[1]) : 0;
+
+      ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) SCRIPT_ENGINE.eval(scriptContent);
+      ScriptObjectMirror data = (ScriptObjectMirror) scriptObjectMirror.get("data");
+      ScriptObjectMirror product = (ScriptObjectMirror) data.get("product");
+      ScriptObjectMirror config = (ScriptObjectMirror) product.get("config");
+      ScriptObjectMirror category = (ScriptObjectMirror) config.get("category");
+      ScriptObjectMirror groups = (ScriptObjectMirror) category.get("groups");
+      ScriptObjectMirror property = (ScriptObjectMirror) product.get("property");
+
+      thumbUrl = IMAGE_HOST + property.get("thumbUrl");
+
+      String panoramaName = "";
+
+      Collection<Object> groupList = groups == null ? category.values() : groups.values();
+
+      for (Object group : groupList) {
+
+        ScriptObjectMirror scenes = (ScriptObjectMirror) ((ScriptObjectMirror) group).get("scenes");
+        Collection<Object> sceneList = scenes.values();
+
+        for (Object scene : sceneList) {
+
+          Integer id = (Integer) ((ScriptObjectMirror) scene).get("id");
+
+          if (id.equals(sceneId)) {
+            thumbUrl = IMAGE_HOST + ((ScriptObjectMirror) scene).get("thumb");
+            panoramaName = (String) ((ScriptObjectMirror) scene).get("name");
+          }
+
+        }
+      }
+
+      ResponseBody mediaResponseBody = null;
+      FileBody fileBody = null;
+
+      try {
+        // @formatter:off
+        mediaResponseBody = HttpTool.createRequest()
+          .url(thumbUrl)
+          .method(HttpMethod.GET)
+          .sendForInputStream();
+        // @formatter:on
+
+        if (mediaResponseBody == null) {
+          return null;
+        }
+
+        fileBody = FileBody.create(targetFolderPath, String.format("%s_%s_%s", panoramaName, sceneId.toString(), fileName));
+
+        if (fileBody.notExistAndIsFile()) {
+          createFileProcessor().path(fileBody).createFile();
+        }
+
+        BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), 660, 280);
+        ImageIO.write(bufferedImage, "jpg", fileBody.getFile());
+      } finally {
+        if (mediaResponseBody != null) {
+          mediaResponseBody.close();
+        }
+      }
+
+      return fileBody;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  public static BufferedImage generateThumbnail(InputStream inputStream, int width, int height) throws IOException {
+    BufferedImage srcImage = ImageIO.read(inputStream);
+
+    BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    Graphics graphics = targetImage.getGraphics();
+    graphics.drawImage(srcImage, 0, 0, width, height, null);
+    graphics.dispose();
+
+    return targetImage;
   }
 }

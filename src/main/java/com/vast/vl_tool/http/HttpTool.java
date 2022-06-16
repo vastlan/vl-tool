@@ -3,6 +3,7 @@ package com.vast.vl_tool.http;
 import com.vast.vl_tool.http.config.annotation.HttpRequestProcessor;
 import com.vast.vl_tool.http.config.annotation.HttpResponseProcessor;
 import com.vast.vl_tool.json.JsonTool;
+import okhttp3.OkHttpClient;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,7 @@ import java.nio.file.Paths;
 public class HttpTool {
 
   public static final RestTemplate REST_TEMPLATE = new RestTemplate();
+  public static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
 
   /**
    * HttpTool.createRequest()
