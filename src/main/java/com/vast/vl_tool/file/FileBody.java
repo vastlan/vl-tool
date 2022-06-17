@@ -33,8 +33,8 @@ public class FileBody {
     return new FileBody(file, file.getName(), file.getAbsolutePath());
   }
 
-  public static FileBody create(String folderRelativePath, String fileName) {
-    String path = folderRelativePath + "/" + fileName;
+  public static FileBody create(String folderAbsolutePath, String fileName) {
+    String path = folderAbsolutePath + "/" + fileName;
     File file = new File(path);
     return new FileBody(file, fileName, path);
   }

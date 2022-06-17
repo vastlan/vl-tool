@@ -3,6 +3,7 @@ package com.vast.vl_tool.file.config.annotation;
 import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.FileBody;
 import com.vast.vl_tool.file.FileTool;
+import net.coobird.thumbnailator.Thumbnails;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.annotation.Documented;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -252,17 +254,17 @@ public class FileProcessor {
     return responseEntity;
   }
 
-  public FileBody grabVideoThumbnail(String targetAbsolutePath) {
-    return grabVideoThumbnail(targetAbsolutePath, DEFAULT_CUT_OUT_VIDEO_FRAME_NUMBER);
+  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath) {
+    return grabVideoThumbnail(targetAbsoluteFilePath, DEFAULT_CUT_OUT_VIDEO_FRAME_NUMBER);
   }
 
   /***
    * 获取视频缩略图
-   * @param targetAbsolutePath 储存缩略图绝对路径
+   * @param targetAbsoluteFilePath 储存缩略图绝对路径
    * @param frameNumber 截取帧数
    * @return 返回缩略图储存的绝对路径
    */
-  public FileBody grabVideoThumbnail(String targetAbsolutePath, int frameNumber) {
+  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath, int frameNumber) {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isTrue(!FileTool.isVideo(fileBody.getFileName()), new IllegalArgumentException("非视频文件异常"));
 
@@ -310,7 +312,7 @@ public class FileProcessor {
         .getGraphics()
         .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, Image.SCALE_SMOOTH), 0, 0, null);
 
-      FileBody thumbnailFileBody = path(targetAbsolutePath).createFile();
+      FileBody thumbnailFileBody = path(targetAbsoluteFilePath).createFile();
 
       ImageIO.write(thumbnailBufferedImage, "jpg", thumbnailFileBody.getFile());
 
@@ -328,6 +330,54 @@ public class FileProcessor {
       } catch (FFmpegFrameGrabber.Exception e) {
         e.printStackTrace();
       }
+    }
+
+    return null;
+  }
+
+  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath) {
+    return grabPictureThumbnail(targetAbsoluteThumbnailFilePath, 0.5, 0.5);
+  }
+
+  /**
+   *
+   * @param targetAbsoluteThumbnailFilePath
+   * @param scale 图片大小（长宽）压缩比例 从0-1，1表示原图
+   * @param outputQuality 图片质量压缩比例 从0-1，越接近1质量越好
+   * @return
+   * @throws IOException
+   */
+  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath, Double scale, Double outputQuality) {
+    AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
+    AssertTool.isTrue(!FileTool.isPicture(fileBody.getFileName()), new IllegalArgumentException("非图片文件异常"));
+
+    FileBody thumbnailFileBody = FileBody.create(targetAbsoluteThumbnailFilePath);
+
+    if (thumbnailFileBody.notExistAndIsFile()) {
+      FileTool.createFileProcessor().path(targetAbsoluteThumbnailFilePath).createFile();
+    }
+
+    FileOutputStream fileOutputStream = null;
+
+    try {
+      try {
+        fileOutputStream = new FileOutputStream(thumbnailFileBody.getFile());
+
+        Thumbnails.of(fileBody.getFile())
+          .scale(scale)
+          .outputQuality(outputQuality)
+          .toOutputStream(fileOutputStream);
+      } finally {
+        if (fileOutputStream != null) {
+          fileOutputStream.close();
+        }
+      }
+
+      return thumbnailFileBody;
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
     return null;
