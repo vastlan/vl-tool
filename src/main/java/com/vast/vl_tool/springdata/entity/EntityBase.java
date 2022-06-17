@@ -23,8 +23,8 @@ public abstract class EntityBase<ID> implements IdEntity<ID> {
 
   private Date lastModifiedTime;
 
-  private ID createdUserId;
+  private String createdUserId;
 
-  private ID lastModifiedUserId;
+  private String lastModifiedUserId;
 
 }
