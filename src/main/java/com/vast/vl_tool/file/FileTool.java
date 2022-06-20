@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file;
 
+import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.config.annotation.FileProcessor;
 import com.vast.vl_tool.http.HttpTool;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -89,7 +90,14 @@ public class FileTool {
     return new PathResource(path);
   }
 
+  public static FileBody grabThumbnailFor720(String url, String targetFolderPath) {
+    return grabThumbnailFor720(url, targetFolderPath, null);
+  }
+
   public static FileBody grabThumbnailFor720(String url, String targetFolderPath, String fileName) {
+    AssertTool.isTrue(!StringUtils.hasLength(url), new IllegalArgumentException("url 不能为空"));
+    AssertTool.isTrue(!StringUtils.hasLength(targetFolderPath), new IllegalArgumentException("targetFolderPath 不能为空"));
+
     String thumbUrl;
     Integer sceneId;
 
@@ -153,7 +161,11 @@ public class FileTool {
           return null;
         }
 
-        fileBody = FileBody.create(targetFolderPath, String.format("%s_%s_%s", panoramaName, sceneId.toString(), fileName));
+        if (StringUtils.hasLength(fileName)) {
+          fileBody = FileBody.create(targetFolderPath, String.format("%s_%s_%s", panoramaName, sceneId.toString(), fileName));
+        } else {
+          fileBody = FileBody.create(targetFolderPath, String.format("%s_%s.jpg", panoramaName, sceneId.toString()));
+        }
 
         if (fileBody.notExistAndIsFile()) {
           createFileProcessor().path(fileBody).createFile();
