@@ -1,9 +1,13 @@
 package com.vast.vl_tool.file.config.annotation;
 
+import com.github.junrar.Archive;
+import com.github.junrar.exception.RarException;
+import com.github.junrar.rarfile.FileHeader;
 import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -18,9 +22,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.annotation.Documented;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -106,9 +114,11 @@ public class FileProcessor {
 
   public FileBody createFile() {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
+    return createFile(fileBody.getFile());
+  }
 
-    File fileSource = fileBody.getFile();
-    AssertTool.isTrue(!FileTool.isFile(fileBody.getFile()), new IllegalArgumentException("非文件路径参数异常"));
+  public FileBody createFile(File fileSource) {
+    AssertTool.isTrue(!FileTool.isFile(fileSource), new IllegalArgumentException("非文件路径参数异常"));
 
     File parentFolder = createFolder(fileSource.getParentFile());
 
@@ -217,6 +227,11 @@ public class FileProcessor {
     return responseEntity;
   }
 
+  /**
+   * 多文件下载
+   * @return
+   * @throws IOException
+   */
   public ResponseEntity<byte[]> downloadFileWithZip() throws IOException {
     return downloadFileWithZip("DataPackage");
   }
@@ -252,6 +267,119 @@ public class FileProcessor {
     zipOutputStream.close();
 
     return responseEntity;
+  }
+
+  /**
+   * 解压zip文件
+   * @param absoluteFolderPath 解压文件夹存储绝对路径
+   * @return
+   */
+  public FileBody unzip(String absoluteFolderPath) {
+    AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
+    AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
+    AssertTool.isTrue(!FileTool.isZip(fileBody.getFileName()), new IllegalArgumentException("非 zip 文件"));
+    AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
+
+    try {
+      // 系统编码
+      // Charset.forName(System.getProperty("sun.jnu.encoding") 获取系统默认编码格式
+      // 若无设置 Charset 且压缩包名称为中文名，报 java.util.zip.ZipException: invalid CEN header (bad entry name)
+      ZipFile zipFile = new ZipFile(fileBody.getFile(), Charset.forName(System.getProperty("sun.jnu.encoding")));
+
+      // 开始解压
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entries.nextElement();
+
+        // 如果是文件夹，就创建个文件夹
+        if (entry.isDirectory()) {
+          createFolder(fileBody.getFile());
+          continue;
+        }
+
+        // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
+        File targetFile = new File(absoluteFolderPath + "/" + entry.getName());
+
+        // 保证这个文件的父文件夹必须要存在
+        if (!targetFile.getParentFile().exists()) {
+          targetFile.getParentFile().mkdirs();
+        }
+
+        if (!targetFile.exists()) {
+          targetFile.createNewFile();
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(targetFile);
+             InputStream is = zipFile.getInputStream(entry)) {
+          IOUtils.copy(is, fos);
+        }
+
+        return FileBody.create(absoluteFolderPath);
+      }
+    } catch (ZipException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  /**
+   * 解压rar文件
+   * @param absoluteFolderPath
+   * @return
+   */
+  public FileBody unrar(String absoluteFolderPath) {
+    AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
+    AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
+    AssertTool.isTrue(!FileTool.isRar(fileBody.getFileName()), new IllegalArgumentException("非 zip 文件"));
+    AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
+
+    FileBody absoluteFolderPathFileBody = FileBody.create(absoluteFolderPath);
+
+    if (!absoluteFolderPathFileBody.existFile()) {
+      createFolder(absoluteFolderPathFileBody.getFile());
+    }
+
+    try(Archive archive = new Archive(fileBody.getFile())) {
+
+      if (archive == null) {
+        return null;
+      }
+
+      // 打印文件信息
+      archive.getMainHeader().print();
+
+      FileHeader fileHeader;
+
+      while ((fileHeader = archive.nextFileHeader()) != null) {
+        FileBody dirFileBody = FileBody.create(absoluteFolderPath + File.separator + fileHeader.getFileNameString());
+        File file = dirFileBody.getFile();
+
+        // 如果是文件夹
+        if (fileHeader.isDirectory()) {
+          createFolder(file);
+          continue;
+        }
+
+        if (dirFileBody.notExistAndIsFile()) {
+          createFile(file);
+        }
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+          archive.extractFile(fileHeader, fileOutputStream);
+        }
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (RarException e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
   public FileBody grabVideoThumbnail(String targetAbsoluteFilePath) {
@@ -382,5 +510,4 @@ public class FileProcessor {
 
     return null;
   }
-
 }

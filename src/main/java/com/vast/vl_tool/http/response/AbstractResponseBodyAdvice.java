@@ -1,7 +1,7 @@
 package com.vast.vl_tool.http.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.vast.vl_tool.http.HttpToolOld;
+import com.vast.vl_tool.json.JsonTool;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -58,7 +58,7 @@ public abstract class AbstractResponseBodyAdvice implements ResponseBodyAdvice<O
 
     if (finalReturnType.equals(String.class)) {
       try {
-        return HttpToolOld.OBJECT_MAPPER.writeValueAsString(new ResponseResult(body));
+        return JsonTool.OBJECT_MAPPER.writeValueAsString(new ResponseResult(body));
       } catch (JsonProcessingException e) {
         e.printStackTrace();
       }
