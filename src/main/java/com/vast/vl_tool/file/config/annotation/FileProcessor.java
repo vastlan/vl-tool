@@ -277,7 +277,6 @@ public class FileProcessor {
   public FileBody unzip(String absoluteFolderPath) {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
-    AssertTool.isTrue(!FileTool.isZip(fileBody.getFileName()), new IllegalArgumentException("非 zip 文件"));
     AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
 
     try {
@@ -306,7 +305,7 @@ public class FileProcessor {
           targetFile.getParentFile().mkdirs();
         }
 
-        if (!targetFile.exists()) {
+        if (targetFile.isFile() && !targetFile.exists()) {
           targetFile.createNewFile();
         }
 
@@ -314,9 +313,9 @@ public class FileProcessor {
              InputStream is = zipFile.getInputStream(entry)) {
           IOUtils.copy(is, fos);
         }
-
-        return FileBody.create(absoluteFolderPath);
       }
+
+      return FileBody.create(absoluteFolderPath);
     } catch (ZipException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -334,7 +333,6 @@ public class FileProcessor {
   public FileBody unrar(String absoluteFolderPath) {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
-    AssertTool.isTrue(!FileTool.isRar(fileBody.getFileName()), new IllegalArgumentException("非 zip 文件"));
     AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
 
     FileBody absoluteFolderPathFileBody = FileBody.create(absoluteFolderPath);
@@ -372,6 +370,8 @@ public class FileProcessor {
           archive.extractFile(fileHeader, fileOutputStream);
         }
       }
+
+      return FileBody.create(absoluteFolderPath);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -510,4 +510,5 @@ public class FileProcessor {
 
     return null;
   }
+
 }

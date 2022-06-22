@@ -64,14 +64,6 @@ public class FileTool {
       .orElse(null) != null;
   }
 
-  public static boolean isZip(String fileName) {
-    return StringUtils.hasLength(fileName) && fileName.endsWith(".zip");
-  }
-
-  public static boolean isRar(String fileName) {
-    return StringUtils.hasLength(fileName) && fileName.endsWith(".rar");
-  }
-
   public static Boolean isFile(File file) {
     if (file.exists()) {
       return file.isFile();
