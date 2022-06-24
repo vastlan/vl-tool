@@ -5,7 +5,9 @@ import com.vast.vl_tool.regex.RegexTool;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,6 +171,10 @@ public class DateTool {
     return parseToDate(LocalDateTime.of(LocalDate.parse(formatDateStrToYMD(dateStr)), localTime));
   }
 
+  public static Date parseToDate(long millisecond) {
+    return new Date(millisecond);
+  }
+
   public static String formatDateStr(String dateStr) {
 
     // 匹配 yyyy-MM-ddTHH:mm:ss、yyyy/MM/ddTHH:mm:ss
@@ -217,5 +223,4 @@ public class DateTool {
 
     throw new IllegalArgumentException("dateStr 非法参数格式；格式如下：yyyy-MM-dd、yyyy/MM/dd");
   }
-
 }

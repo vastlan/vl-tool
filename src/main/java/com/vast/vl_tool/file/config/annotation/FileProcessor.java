@@ -1,5 +1,14 @@
 package com.vast.vl_tool.file.config.annotation;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.lang.GeoLocation;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDescriptor;
+import com.drew.metadata.exif.GpsDirectory;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -21,11 +30,13 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.annotation.Documented;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -386,6 +397,35 @@ public class FileProcessor {
     return grabVideoThumbnail(targetAbsoluteFilePath, DEFAULT_CUT_OUT_VIDEO_FRAME_NUMBER);
   }
 
+  /**
+   * 解析成 exif 文件信息源
+   * @return
+   */
+  public FileBody formatToEXIF() throws JpegProcessingException, IOException {
+    AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
+    Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getFile());
+
+    Iterable<Directory> directories = metadata.getDirectories();
+
+    for (Object d : directories) {
+      if (!(d instanceof GpsDirectory)) {
+        continue;
+      }
+
+      GeoLocation geoLocation = ((GpsDirectory) d).getGeoLocation();
+
+      if (geoLocation == null) {
+        continue;
+      }
+
+      this.fileBody.setLatitude(geoLocation.getLatitude());
+      this.fileBody.setLongitude(geoLocation.getLongitude());
+      break;
+    }
+
+    return fileBody;
+  }
+
   /***
    * 获取视频缩略图
    * @param targetAbsoluteFilePath 储存缩略图绝对路径
@@ -510,5 +550,4 @@ public class FileProcessor {
 
     return null;
   }
-
 }

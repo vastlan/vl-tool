@@ -14,7 +14,6 @@ import java.io.File;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class FileBody {
 
@@ -23,6 +22,16 @@ public class FileBody {
   private String fileName;
 
   private String fileAbsolutePath;
+
+  private Double latitude;
+
+  private Double longitude;
+
+  public FileBody(File file, String fileName, String fileAbsolutePath) {
+    this.file = file;
+    this.fileName = fileName;
+    this.fileAbsolutePath = fileAbsolutePath;
+  }
 
   public static FileBody create(String fileAbsolutePath) {
     File file = new File(fileAbsolutePath);
