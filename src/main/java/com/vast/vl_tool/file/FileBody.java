@@ -1,9 +1,12 @@
 package com.vast.vl_tool.file;
 
 import lombok.*;
+import org.aspectj.util.FileUtil;
 
 import javax.persistence.Transient;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * @author vastlan

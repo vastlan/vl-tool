@@ -162,7 +162,7 @@ public class FileTool {
         }
 
         if (StringUtils.hasLength(fileName)) {
-          fileBody = FileBody.create(targetFolderPath, String.format("%s_%s_%s", panoramaName, sceneId.toString(), fileName));
+          fileBody = FileBody.create(targetFolderPath, fileName + ".jpg");
         } else {
           fileBody = FileBody.create(targetFolderPath, String.format("%s_%s.jpg", panoramaName, sceneId.toString()));
         }

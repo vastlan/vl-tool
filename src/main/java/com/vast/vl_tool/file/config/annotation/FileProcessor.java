@@ -401,29 +401,35 @@ public class FileProcessor {
    * 解析成 exif 文件信息源
    * @return
    */
-  public FileBody formatToEXIF() throws JpegProcessingException, IOException {
+  public FileBody formatToEXIF() throws IOException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
-    Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getFile());
 
-    Iterable<Directory> directories = metadata.getDirectories();
+    try {
+      Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getFile());
 
-    for (Object d : directories) {
-      if (!(d instanceof GpsDirectory)) {
-        continue;
+      Iterable<Directory> directories = metadata.getDirectories();
+
+      for (Object d : directories) {
+        if (!(d instanceof GpsDirectory)) {
+          continue;
+        }
+
+        GeoLocation geoLocation = ((GpsDirectory) d).getGeoLocation();
+
+        if (geoLocation == null) {
+          continue;
+        }
+
+        this.fileBody.setLatitude(geoLocation.getLatitude());
+        this.fileBody.setLongitude(geoLocation.getLongitude());
+        break;
       }
 
-      GeoLocation geoLocation = ((GpsDirectory) d).getGeoLocation();
+      return fileBody;
 
-      if (geoLocation == null) {
-        continue;
-      }
-
-      this.fileBody.setLatitude(geoLocation.getLatitude());
-      this.fileBody.setLongitude(geoLocation.getLongitude());
-      break;
+    } catch (JpegProcessingException e) {
+      throw new IOException(e.getMessage());
     }
-
-    return fileBody;
   }
 
   /***
