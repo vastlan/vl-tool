@@ -3,6 +3,7 @@ package com.vast.vl_tool.file;
 import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.config.annotation.FileProcessor;
 import com.vast.vl_tool.http.HttpTool;
+import com.vast.vl_tool.time.DateTool;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import okhttp3.ResponseBody;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -24,6 +25,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -48,7 +52,7 @@ public class FileTool {
     };
 
     return Arrays.stream(pictureSuffixArray)
-      .filter(item -> fileName.indexOf(item) != -1)
+      .filter(item -> fileName.toLowerCase().indexOf(item) != -1)
       .findAny()
       .orElse(null) != null;
   }
@@ -59,7 +63,7 @@ public class FileTool {
     };
 
     return Arrays.stream(videoSuffixArray)
-      .filter(item -> fileName.indexOf(item) != -1)
+      .filter(item -> fileName.toLowerCase().indexOf(item) != -1)
       .findAny()
       .orElse(null) != null;
   }
@@ -94,6 +98,13 @@ public class FileTool {
     return grabThumbnailFor720(url, targetFolderPath, null);
   }
 
+  /**
+   * 截取720缩略图
+   * @param url
+   * @param targetFolderPath
+   * @param fileName 需自行加上文件后缀
+   * @return
+   */
   public static FileBody grabThumbnailFor720(String url, String targetFolderPath, String fileName) {
     AssertTool.isTrue(!StringUtils.hasLength(url), new IllegalArgumentException("url 不能为空"));
     AssertTool.isTrue(!StringUtils.hasLength(targetFolderPath), new IllegalArgumentException("targetFolderPath 不能为空"));
@@ -162,7 +173,7 @@ public class FileTool {
         }
 
         if (StringUtils.hasLength(fileName)) {
-          fileBody = FileBody.create(targetFolderPath, fileName + ".jpg");
+          fileBody = FileBody.create(targetFolderPath, fileName);
         } else {
           fileBody = FileBody.create(targetFolderPath, String.format("%s_%s.jpg", panoramaName, sceneId.toString()));
         }

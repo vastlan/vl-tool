@@ -5,6 +5,7 @@ import com.vast.vl_tool.regex.RegexTool;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -222,5 +223,30 @@ public class DateTool {
     }
 
     throw new IllegalArgumentException("dateStr 非法参数格式；格式如下：yyyy-MM-dd、yyyy/MM/dd");
+  }
+
+  /**
+   * @param date 比较时间
+   * @param chronoUnit 相差类型
+   * @return
+   *
+   * 也可通过 Duration 去处理
+   */
+  public static long untilNow(Date date, ChronoUnit chronoUnit) {
+    LocalDateTime localDateTime = parseToLocalDateTime(date);
+    return localDateTime.until(getCurrentDateTime(), chronoUnit);
+  }
+
+  /**
+   * 计算两个日期的相差 chronoUnit 数值
+   * @param begin
+   * @param end
+   * @param chronoUnit
+   * @return
+   */
+  public static long difference(Date begin, Date end, ChronoUnit chronoUnit) {
+    LocalDateTime beginDateTime = parseToLocalDateTime(begin);
+    LocalDateTime endDateTime = parseToLocalDateTime(end);
+    return beginDateTime.until(endDateTime, chronoUnit);
   }
 }

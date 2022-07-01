@@ -1,13 +1,10 @@
 package com.vast.vl_tool.file.config.annotation;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.GpsDescriptor;
 import com.drew.metadata.exif.GpsDirectory;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -31,12 +28,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
+import java.util.UUID;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -110,17 +109,15 @@ public class FileProcessor {
     return fileBody.existFile();
   }
 
-  public Boolean delete() {
+  public Boolean delete() throws IOException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
-
     File file = fileBody.getFile();
 
-    if(fileBody.existFile() && file.isFile()) {
-      return file.delete();
+    if (!file.exists()) {
+      throw new FileNotFoundException(file.getName());
     }
 
-    System.out.println(file.getName() + "文件不存在");
-    return false;
+    return file.delete();
   }
 
   public FileBody createFile() {
@@ -253,17 +250,12 @@ public class FileProcessor {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
 
-    byte[] bytes = new byte[1024];
 
     for (FileBody fileBody : this.fileBodyList) {
       try(FileInputStream fileInputStream = new FileInputStream(fileBody.getFile())) {
         zipOutputStream.putNextEntry(new ZipEntry(fileBody.getFileName()));
 
-        int len;
-
-        while ((len = fileInputStream.read(bytes) ) > 0) {
-          zipOutputStream.write(bytes, 0, len);
-        }
+        fileInputStream.transferTo(zipOutputStream);
       }
 
       zipOutputStream.closeEntry();
@@ -271,13 +263,12 @@ public class FileProcessor {
 
     String newFileName = new String(zipFileName.getBytes("UTF-8"), "ISO-8859-1");
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.add ( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
-    ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(byteArrayOutputStream.toByteArray(), headers, HttpStatus.OK);
-
     zipOutputStream.close();
 
-    return responseEntity;
+    HttpHeaders headers = new HttpHeaders();
+    headers.add ( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
+
+    return ResponseEntity.ok().headers(headers).body(byteArrayOutputStream.toByteArray());
   }
 
   /**
