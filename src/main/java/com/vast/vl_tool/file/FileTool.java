@@ -77,7 +77,6 @@ public class FileTool {
     return StringUtils.hasLength(fileName) && fileName.indexOf(".") != -1;
   }
 
-
   /**
    * FileTool
    *  .createFileProcessor()

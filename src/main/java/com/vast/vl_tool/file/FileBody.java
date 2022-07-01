@@ -7,6 +7,9 @@ import javax.persistence.Transient;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author vastlan
@@ -20,42 +23,66 @@ import java.io.InputStream;
 @NoArgsConstructor
 public class FileBody {
 
+  private Path path;
+
   private File file;
 
-  private String fileName;
-
   private String fileAbsolutePath;
+
+  private String pathRoot;
+
+  private String fileRelativePath;
+
+  private String fileName;
 
   private Double latitude;
 
   private Double longitude;
 
-  public FileBody(File file, String fileName, String fileAbsolutePath) {
-    this.file = file;
-    this.fileName = fileName;
-    this.fileAbsolutePath = fileAbsolutePath;
+  public FileBody(Path path) {
+    this.path = path;
+    this.file = path.toFile();
+    init();
   }
 
-  public static FileBody create(String fileAbsolutePath) {
-    File file = new File(fileAbsolutePath);
-    return new FileBody(file, file.getName(), file.getAbsolutePath());
+  public FileBody(File file) {
+    this.file = file;
+    this.path = Paths.get(file.getAbsolutePath());
+    init();
+  }
+
+  public static FileBody create(Path path) {
+    return new FileBody(path);
   }
 
   public static FileBody create(File file) {
-    return new FileBody(file, file.getName(), file.getAbsolutePath());
+    return new FileBody(file);
+  }
+
+  public static FileBody create(String fileAbsolutePath) {
+    return new FileBody(Paths.get(fileAbsolutePath));
   }
 
   public static FileBody create(String folderAbsolutePath, String fileName) {
-    String path = folderAbsolutePath + "/" + fileName;
-    File file = new File(path);
-    return new FileBody(file, fileName, path);
+    return new FileBody(Paths.get(folderAbsolutePath).resolve(fileName));
+  }
+
+  public static FileBody create(String source, String folderRelativePath, String fileName) {
+    return new FileBody(Paths.get(source).resolve(folderRelativePath).resolve(fileName));
   }
 
   public boolean existFile() {
-    return file.exists();
+    return Files.exists(path);
   }
 
   public boolean notExistAndIsFile() {
     return !existFile() && FileTool.isFile(file);
+  }
+
+  private void init() {
+    this.fileAbsolutePath = path.toAbsolutePath().toString();
+    this.pathRoot = path.getRoot().toString();
+    this.fileRelativePath = fileAbsolutePath.replace(pathRoot, "/");
+    this.fileName = path.getFileName().toString();
   }
 }

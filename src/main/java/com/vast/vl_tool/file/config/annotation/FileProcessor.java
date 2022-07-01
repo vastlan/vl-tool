@@ -68,6 +68,11 @@ public class FileProcessor {
     return this;
   }
 
+  public FileProcessor path(Path path) {
+    this.fileBody = FileBody.create(path);
+    return this;
+  }
+
   public FileProcessor path(File file) {
     this.fileBody = FileBody.create(file);
     return this;
@@ -95,7 +100,7 @@ public class FileProcessor {
    * @return
    */
   public FileProcessor path(String source, String folderRelativePath, String fileName) {
-    this.fileBody = FileBody.create(source + "/" + folderRelativePath + "/" + fileName);
+    this.fileBody = FileBody.create(source, folderRelativePath, fileName);
     return this;
   }
 
@@ -252,18 +257,17 @@ public class FileProcessor {
 
 
     for (FileBody fileBody : this.fileBodyList) {
-      try(FileInputStream fileInputStream = new FileInputStream(fileBody.getFile())) {
+      try(InputStream inputStream = Files.newInputStream(fileBody.getPath())) {
         zipOutputStream.putNextEntry(new ZipEntry(fileBody.getFileName()));
-
-        fileInputStream.transferTo(zipOutputStream);
+        inputStream.transferTo(zipOutputStream);
       }
 
       zipOutputStream.closeEntry();
     }
 
-    String newFileName = new String(zipFileName.getBytes("UTF-8"), "ISO-8859-1");
-
     zipOutputStream.close();
+
+    String newFileName = new String(zipFileName.getBytes("UTF-8"), "ISO-8859-1");
 
     HttpHeaders headers = new HttpHeaders();
     headers.add ( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
