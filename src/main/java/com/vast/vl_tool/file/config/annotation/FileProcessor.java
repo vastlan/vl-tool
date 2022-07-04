@@ -24,18 +24,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -237,42 +236,40 @@ public class FileProcessor {
     headers.add ( "Content-Disposition","attachment;filename=" + newFileName);
     ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(body, headers, HttpStatus.OK);
 
-    return responseEntity;
+    return ResponseEntity.ok().headers(headers).body(body);
   }
 
   /**
    * 多文件下载
-   * @return
+   * @param response
    * @throws IOException
    */
-  public ResponseEntity<byte[]> downloadFileWithZip() throws IOException {
-    return downloadFileWithZip("DataPackage");
+  public void downloadFileWithZip(HttpServletResponse response) throws IOException {
+    downloadFileWithZip(response, "DataPackage");
   }
 
-  public ResponseEntity<byte[]> downloadFileWithZip(String zipFileName) throws IOException {
+  /**
+   *
+   * @param response
+   * @param zipFileName 压缩包文件名
+   * @throws IOException
+   */
+  public void downloadFileWithZip(HttpServletResponse response, String zipFileName) throws IOException {
     AssertTool.isTrue(fileBodyList == null || fileBodyList.isEmpty(), new IllegalArgumentException("fileBodyList 不能为空"));
 
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
-
-
-    for (FileBody fileBody : this.fileBodyList) {
-      try(InputStream inputStream = Files.newInputStream(fileBody.getPath())) {
-        zipOutputStream.putNextEntry(new ZipEntry(fileBody.getFileName()));
-        inputStream.transferTo(zipOutputStream);
-      }
-
-      zipOutputStream.closeEntry();
-    }
-
-    zipOutputStream.close();
-
     String newFileName = new String(zipFileName.getBytes("UTF-8"), "ISO-8859-1");
+    response.setHeader( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.add ( "Content-Disposition","attachment;filename=" + newFileName + ".zip");
+    try (ZipOutputStream zipOutputStream = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()), StandardCharsets.UTF_8)) {
+      for (FileBody fileBody : fileBodyList) {
+        ZipEntry zipEntry = new ZipEntry(fileBody.getFileName());
+        zipOutputStream.putNextEntry(zipEntry);
 
-    return ResponseEntity.ok().headers(headers).body(byteArrayOutputStream.toByteArray());
+        try (InputStream inputStream = Files.newInputStream(fileBody.getPath())) {
+          inputStream.transferTo(zipOutputStream);
+        }
+      }
+    }
   }
 
   /**
