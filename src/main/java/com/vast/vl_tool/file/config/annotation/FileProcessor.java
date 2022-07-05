@@ -234,7 +234,6 @@ public class FileProcessor {
 
     HttpHeaders headers = new HttpHeaders();
     headers.add ( "Content-Disposition","attachment;filename=" + newFileName);
-    ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(body, headers, HttpStatus.OK);
 
     return ResponseEntity.ok().headers(headers).body(body);
   }
