@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file.config.annotation;
 
+import com.alibaba.fastjson.JSONObject;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.GeoLocation;
@@ -174,7 +175,7 @@ public class FileProcessor {
    * @param fileSource
    * @return 返回文件的存储路径
    */
-  public FileBody coverAndUpload(MultipartFile fileSource) {
+  public FileBody coverAndUpload(MultipartFile fileSource) throws Exception {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
 
     File convertFile = fileBody.getFile();
@@ -191,14 +192,10 @@ public class FileProcessor {
     try (FileOutputStream fileOutputStream = new FileOutputStream(convertFile)) {
       fileOutputStream.write (fileSource.getBytes());
       return fileBody;
-    } catch (Exception e) {
-      e.printStackTrace();
     }
-
-    return null;
   }
 
-  public FileBody upload(MultipartFile fileSource) {
+  public FileBody upload(MultipartFile fileSource) throws Exception {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
 
     File file = fileBody.getFile();
@@ -224,7 +221,7 @@ public class FileProcessor {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
 
     if (!exist()) {
-      new FileNotFoundException("找不到指定文件");
+      throw new FileNotFoundException("找不到指定文件");
     }
 
     InputStream inputStream= new FileInputStream(fileBody.getFile());
@@ -276,55 +273,47 @@ public class FileProcessor {
    * @param absoluteFolderPath 解压文件夹存储绝对路径
    * @return
    */
-  public FileBody unzip(String absoluteFolderPath) {
+  public FileBody unzip(String absoluteFolderPath) throws ZipException, IOException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
     AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
 
-    try {
-      // 系统编码
-      // Charset.forName(System.getProperty("sun.jnu.encoding") 获取系统默认编码格式
-      // 若无设置 Charset 且压缩包名称为中文名，报 java.util.zip.ZipException: invalid CEN header (bad entry name)
-      ZipFile zipFile = new ZipFile(fileBody.getFile(), Charset.forName(System.getProperty("sun.jnu.encoding")));
+    // 系统编码
+    // Charset.forName(System.getProperty("sun.jnu.encoding") 获取系统默认编码格式
+    // 若无设置 Charset 且压缩包名称为中文名，报 java.util.zip.ZipException: invalid CEN header (bad entry name)
+    ZipFile zipFile = new ZipFile(fileBody.getFile(), Charset.forName(System.getProperty("sun.jnu.encoding")));
 
-      // 开始解压
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+    // 开始解压
+    Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = (ZipEntry) entries.nextElement();
+    while (entries.hasMoreElements()) {
+      ZipEntry entry = (ZipEntry) entries.nextElement();
 
-        // 如果是文件夹，就创建个文件夹
-        if (entry.isDirectory()) {
-          createFolder(fileBody.getFile());
-          continue;
-        }
-
-        // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
-        File targetFile = new File(absoluteFolderPath + "/" + entry.getName());
-
-        // 保证这个文件的父文件夹必须要存在
-        if (!targetFile.getParentFile().exists()) {
-          targetFile.getParentFile().mkdirs();
-        }
-
-        if (targetFile.isFile() && !targetFile.exists()) {
-          targetFile.createNewFile();
-        }
-
-        try (FileOutputStream fos = new FileOutputStream(targetFile);
-             InputStream is = zipFile.getInputStream(entry)) {
-          IOUtils.copy(is, fos);
-        }
+      // 如果是文件夹，就创建个文件夹
+      if (entry.isDirectory()) {
+        createFolder(fileBody.getFile());
+        continue;
       }
 
-      return FileBody.create(absoluteFolderPath);
-    } catch (ZipException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
+      // 如果是文件，就先创建一个文件，然后用io流把内容copy过去
+      File targetFile = new File(absoluteFolderPath + "/" + entry.getName());
+
+      // 保证这个文件的父文件夹必须要存在
+      if (!targetFile.getParentFile().exists()) {
+        targetFile.getParentFile().mkdirs();
+      }
+
+      if (targetFile.isFile() && !targetFile.exists()) {
+        targetFile.createNewFile();
+      }
+
+      try (FileOutputStream fos = new FileOutputStream(targetFile);
+           InputStream is = zipFile.getInputStream(entry)) {
+        IOUtils.copy(is, fos);
+      }
     }
 
-    return null;
+    return FileBody.create(absoluteFolderPath);
   }
 
   /**
@@ -332,7 +321,7 @@ public class FileProcessor {
    * @param absoluteFolderPath
    * @return
    */
-  public FileBody unrar(String absoluteFolderPath) {
+  public FileBody unrar(String absoluteFolderPath) throws IOException, RarException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isNull(this.fileBody, new NullPointerException("压缩文件存储文件夹绝对路径不能为空"));
     AssertTool.isTrue(!fileBody.existFile(), new IllegalArgumentException("文件不存在"));
@@ -375,16 +364,10 @@ public class FileProcessor {
 
       return FileBody.create(absoluteFolderPath);
 
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (RarException e) {
-      e.printStackTrace();
     }
-
-    return null;
   }
 
-  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath) {
+  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath) throws IOException {
     return grabVideoThumbnail(targetAbsoluteFilePath, DEFAULT_CUT_OUT_VIDEO_FRAME_NUMBER);
   }
 
@@ -429,7 +412,7 @@ public class FileProcessor {
    * @param frameNumber 截取帧数
    * @return 返回缩略图储存的绝对路径
    */
-  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath, int frameNumber) {
+  public FileBody grabVideoThumbnail(String targetAbsoluteFilePath, int frameNumber) throws FFmpegFrameGrabber.Exception, FrameGrabber.Exception, IOException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isTrue(!FileTool.isVideo(fileBody.getFileName()), new IllegalArgumentException("非视频文件异常"));
 
@@ -483,12 +466,6 @@ public class FileProcessor {
 
       return thumbnailFileBody;
 
-    } catch (FFmpegFrameGrabber.Exception e) {
-      e.printStackTrace();
-    } catch (FrameGrabber.Exception e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
     } finally {
       try {
         videoGrabber.stop();
@@ -496,11 +473,9 @@ public class FileProcessor {
         e.printStackTrace();
       }
     }
-
-    return null;
   }
 
-  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath) {
+  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath) throws IOException {
     return grabPictureThumbnail(targetAbsoluteThumbnailFilePath, 0.5, 0.5);
   }
 
@@ -512,7 +487,7 @@ public class FileProcessor {
    * @return
    * @throws IOException
    */
-  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath, Double scale, Double outputQuality) {
+  public FileBody grabPictureThumbnail(String targetAbsoluteThumbnailFilePath, Double scale, Double outputQuality) throws IOException {
     AssertTool.isNull(this.fileBody, new NullPointerException(NULL_FILE_BODY_ERROR_MESSAGE));
     AssertTool.isTrue(!FileTool.isPicture(fileBody.getFileName()), new IllegalArgumentException("非图片文件异常"));
 
@@ -525,26 +500,18 @@ public class FileProcessor {
     FileOutputStream fileOutputStream = null;
 
     try {
-      try {
-        fileOutputStream = new FileOutputStream(thumbnailFileBody.getFile());
+      fileOutputStream = new FileOutputStream(thumbnailFileBody.getFile());
 
-        Thumbnails.of(fileBody.getFile())
-          .scale(scale)
-          .outputQuality(outputQuality)
-          .toOutputStream(fileOutputStream);
-      } finally {
-        if (fileOutputStream != null) {
-          fileOutputStream.close();
-        }
+      Thumbnails.of(fileBody.getFile())
+        .scale(scale)
+        .outputQuality(outputQuality)
+        .toOutputStream(fileOutputStream);
+    } finally {
+      if (fileOutputStream != null) {
+        fileOutputStream.close();
       }
-
-      return thumbnailFileBody;
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
 
-    return null;
+    return thumbnailFileBody;
   }
 }

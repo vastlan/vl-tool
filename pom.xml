@@ -10,11 +10,11 @@
     </parent>
     <groupId>com.vast</groupId>
     <artifactId>vl-tool</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>vl-tool</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>14</java.version>
     </properties>
 
     <!-- 配置自己的私服仓库地址 -->
@@ -44,11 +44,13 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -60,6 +62,7 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.73</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- javacv -->
@@ -74,6 +77,7 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
             <version>1.5.6</version>
+            <optional>true</optional>
         </dependency>
 
         <!--图片压缩-->
@@ -81,6 +85,7 @@
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- jpa -->
@@ -102,6 +107,7 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.15.1</version>
+            <optional>true</optional>
         </dependency>
         <!--jsoup-->
 
@@ -110,6 +116,7 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp-apache</artifactId>
             <version>3.13.1</version>
+            <optional>true</optional>
         </dependency>
         <!--okhttp-->
 
@@ -117,6 +124,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- 导入rar解压包 -->
@@ -124,6 +132,7 @@
             <groupId>com.github.junrar</groupId>
             <artifactId>junrar</artifactId>
             <version>0.7</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- 获取照片的经纬度 start -->
@@ -131,12 +140,14 @@
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.18.0</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.adobe.xmp</groupId>
             <artifactId>xmpcore</artifactId>
             <version>6.1.11</version>
+            <optional>true</optional>
         </dependency>
         <!-- 获取照片的经纬度 end -->
 
@@ -156,12 +167,24 @@
 <!--                    </excludes>-->
 <!--                </configuration>-->
 <!--            </plugin>-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>14</source>
                     <target>14</target>
+                </configuration>
+            </plugin>
+
+            <!-- maven打包排除spring-boot内嵌tomcat容器依赖jar -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <packagingExcludes>
+                        WEB-INF/lib/tomcat-embed-*.jar,
+                        WEB-INF/lib/spring-boot-starter-tomcat-*.jar
+                    </packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

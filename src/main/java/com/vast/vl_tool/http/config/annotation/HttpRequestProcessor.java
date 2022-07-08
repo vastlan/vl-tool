@@ -104,7 +104,11 @@ public class HttpRequestProcessor {
     return responseEntity.getBody();
   }
 
-  public ResponseBody sendForInputStream() {
+  /**
+   * 请求媒体数据地址获取其流
+   * @return
+   */
+  public ResponseBody sendForInputStream() throws IOException {
     Set<Map.Entry<String, List<String>>> headers = httpRequestHeader.value().entrySet();
 
     Request.Builder requestBuilder = new Request.Builder().url(url);
@@ -122,14 +126,10 @@ public class HttpRequestProcessor {
     ResponseBody body = null;
     InputStream stream = null;
 
-    try {
-      Response response = HttpTool.OK_HTTP_CLIENT.newCall(request).execute();
-      body = response.body();
+    Response response = HttpTool.OK_HTTP_CLIENT.newCall(request).execute();
+    body = response.body();
 
-      stream = body.byteStream();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    stream = body.byteStream();
 
     return body;
   }
