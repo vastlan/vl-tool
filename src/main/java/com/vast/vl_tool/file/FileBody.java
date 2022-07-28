@@ -1,12 +1,8 @@
 package com.vast.vl_tool.file;
 
 import lombok.*;
-import org.aspectj.util.FileUtil;
 
-import javax.persistence.Transient;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,7 +78,7 @@ public class FileBody {
   private void init() {
     this.fileAbsolutePath = path.toAbsolutePath().toString();
     this.pathRoot = path.getRoot().toString();
-    this.fileRelativePath = fileAbsolutePath.replace(pathRoot, "/");
+    this.fileRelativePath = fileAbsolutePath.replace(pathRoot, "\\");
     this.fileName = path.getFileName().toString();
   }
 }

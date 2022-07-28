@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vast</groupId>
     <artifactId>vl-tool</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
     <name>vl-tool</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -39,13 +39,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -62,7 +55,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.73</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- javacv -->
@@ -70,22 +62,6 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv</artifactId>
             <version>1.5.6</version>
-        </dependency>
-
-        <!--视频处理 截取视频缩略图 -->
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv-platform</artifactId>
-            <version>1.5.6</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!--图片压缩-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>0.4.8</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- jpa -->
@@ -132,6 +108,22 @@
             <groupId>com.github.junrar</groupId>
             <artifactId>junrar</artifactId>
             <version>0.7</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!--视频处理 截取视频缩略图 -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.6</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!--图片压缩-->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
             <optional>true</optional>
         </dependency>
 
