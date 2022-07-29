@@ -1,5 +1,6 @@
-package com.vast.vl_tool.file;
+package com.vast.vl_tool.file.entity;
 
+import com.vast.vl_tool.file.FileTool;
 import lombok.*;
 
 import java.io.File;
@@ -30,10 +31,6 @@ public class FileBody {
   private String fileRelativePath;
 
   private String fileName;
-
-  private Double latitude;
-
-  private Double longitude;
 
   public FileBody(Path path) {
     this.path = path;

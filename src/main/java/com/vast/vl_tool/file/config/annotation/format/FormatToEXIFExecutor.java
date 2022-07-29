@@ -6,23 +6,33 @@ import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.ExifFileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 
 import java.io.IOException;
 
 /**
  * @author vastlan
  * @description
+ * @use
+ *  tool
+ *    .format()
+ *    .content(xxx)
+ *    .toEXIF()
+ *    .invoke()
  * @created 2022/7/28 18:28
  */
 public class FormatToEXIFExecutor extends AbstractIOFormatExecutor {
 
-  public FormatToEXIFExecutor(FileBody fileBody) {
-    super(fileBody);
+  public FormatToEXIFExecutor(Object body) {
+    super(body);
   }
 
   @Override
   public void execute() throws IOException {
+    ExifFileBody exifFileBody = (ExifFileBody) body;
+    FileBody fileBody = exifFileBody.getFileBody();
+
     try {
       Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getFile());
 
@@ -39,12 +49,12 @@ public class FormatToEXIFExecutor extends AbstractIOFormatExecutor {
           continue;
         }
 
-        this.fileBody.setLatitude(geoLocation.getLatitude());
-        this.fileBody.setLongitude(geoLocation.getLongitude());
+        exifFileBody.setLatitude(geoLocation.getLatitude());
+        exifFileBody.setLongitude(geoLocation.getLongitude());
         break;
       }
 
-      setFormattedResult(fileBody);
+      setFormattedResult(exifFileBody);
 
     } catch (JpegProcessingException e) {
       throw new IOException(e.getMessage());

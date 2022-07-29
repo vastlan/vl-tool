@@ -1,6 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.grab;
 
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.IOExecutor;
 import com.vast.vl_tool.file.config.annotation.IOHandler;
 

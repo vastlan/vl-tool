@@ -6,6 +6,7 @@ import com.vast.vl_tool.file.config.annotation.format.IOFormatHandler;
 import com.vast.vl_tool.file.config.annotation.grab.IOGrabHandler;
 import com.vast.vl_tool.file.config.annotation.packet.IOPacketHandler;
 import com.vast.vl_tool.file.config.annotation.upload.IOUploadHandler;
+import com.vast.vl_tool.file.entity.FileBody;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,5 +75,9 @@ public class FileTool {
 
   public static IOFormatHandler format() {
     return new IOFormatHandler();
+  }
+
+  public static void main(String[] args) throws IOException {
+    System.out.println(FileTool.format().content(FileBody.create("D:\\resource\\20220623052541_DJI_0557.jpg")).toEXIF().invoke());
   }
 }

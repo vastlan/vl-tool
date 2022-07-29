@@ -1,7 +1,7 @@
 package com.vast.vl_tool.file.config.annotation.grab;
 
 import com.vast.vl_tool.exception.AssertTool;
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.http.HttpTool;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;

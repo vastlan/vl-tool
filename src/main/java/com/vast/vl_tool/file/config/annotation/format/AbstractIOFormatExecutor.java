@@ -1,6 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.format;
 
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.AbstractIOExecutor;
 import org.springframework.util.Assert;
 
@@ -14,12 +14,12 @@ import java.io.IOException;
 
 public abstract class AbstractIOFormatExecutor extends AbstractIOExecutor<IOFormatHandler> implements IOFormatExecutor {
 
-  protected FileBody fileBody;
+  protected Object body;
 
-  private FileBody formattedResult;
+  private Object formattedResult;
 
-  public AbstractIOFormatExecutor(FileBody fileBody) {
-    this.fileBody = fileBody;
+  public AbstractIOFormatExecutor(Object body) {
+    this.body = body;
   }
 
   @Override
@@ -29,16 +29,16 @@ public abstract class AbstractIOFormatExecutor extends AbstractIOExecutor<IOForm
 
   @Override
   public boolean checkParamValidity() {
-    Assert.notNull(fileBody, "FileBody不能为空");
+    Assert.notNull(body, "Body 不能为空");
     return true;
   }
 
-  public void setFormattedResult(FileBody fileBody) {
-    this.formattedResult = fileBody;
+  public void setFormattedResult(Object result) {
+    this.formattedResult = result;
   }
 
   @Override
-  public FileBody formattedResult() {
+  public Object formattedResult() {
     return formattedResult;
   }
 }

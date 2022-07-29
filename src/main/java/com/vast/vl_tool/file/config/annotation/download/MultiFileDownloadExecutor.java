@@ -1,6 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.download;
 
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;

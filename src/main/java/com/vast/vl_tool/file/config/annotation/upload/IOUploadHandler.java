@@ -1,6 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.upload;
 
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
 import org.springframework.util.Assert;

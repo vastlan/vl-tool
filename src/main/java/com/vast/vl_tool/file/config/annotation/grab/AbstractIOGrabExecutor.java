@@ -1,7 +1,7 @@
 package com.vast.vl_tool.file.config.annotation.grab;
 
 import com.vast.vl_tool.exception.AssertTool;
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.AbstractIOExecutor;
 import com.vast.vl_tool.time.DateTool;
 import org.springframework.util.Assert;

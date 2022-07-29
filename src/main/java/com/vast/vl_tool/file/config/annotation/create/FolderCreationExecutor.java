@@ -1,7 +1,8 @@
 package com.vast.vl_tool.file.config.annotation.create;
 
 import com.vast.vl_tool.exception.AssertTool;
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.FileTool;
+import com.vast.vl_tool.file.entity.FileBody;
 
 import java.io.File;
 import java.io.IOException;

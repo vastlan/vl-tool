@@ -4,7 +4,7 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.vast.vl_tool.exception.AssertTool;
-import com.vast.vl_tool.file.FileBody;
+import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.create.FolderCreationExecutor;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
