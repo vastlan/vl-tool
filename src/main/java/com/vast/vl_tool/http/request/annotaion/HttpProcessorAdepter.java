@@ -1,13 +1,12 @@
-package com.vast.vl_tool.http.config.annotation;
+package com.vast.vl_tool.http.request.annotaion;
 
 import org.springframework.util.Assert;
 
 /**
  * @author vastlan
  * @description
- * @created 2022/6/8 11:18
+ * @created 2022/8/1 10:43
  */
-
 public class HttpProcessorAdepter<P> {
 
   P httpProcessor;
@@ -24,5 +23,4 @@ public class HttpProcessorAdepter<P> {
   public void setProcessor(P processor) {
     this.httpProcessor = processor;
   }
-
 }

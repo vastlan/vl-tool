@@ -1,4 +1,4 @@
-package com.vast.vl_tool.http.config.annotation;
+package com.vast.vl_tool.http.response.annotation;
 
 import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.json.JsonTool;
@@ -19,6 +19,11 @@ import java.nio.file.Paths;
 /**
  * @author vastlan
  * @description
+ * @use
+ *  HttpTool.createResponse(xxx)
+ *  [.mediaType(xxx)]
+ *  [.status(HttpStatus)]
+ *  .write(xxx)
  * @created 2022/6/8 17:58
  */
 public class HttpResponseProcessor {
@@ -45,18 +50,18 @@ public class HttpResponseProcessor {
     return this;
   }
 
-  /**
-   * 将文件源内容以流的形式返回
-   * @param object
-   * @throws IOException
-   */
   public void write(Object object) throws IOException {
     AssertTool.isNull(servletResponse, new NullPointerException("ServletResponse 不能为空"));
     servletResponse.setContentType(mediaTypeValue);
     JsonTool.OBJECT_MAPPER.writeValue(servletResponse.getWriter(), object);
   }
 
-  public ResponseEntity<AbstractResource> writeFileStream(PathResource pathResource) {
+  /**
+   * 将文件源内容以流的形式返回
+   * @param pathResource
+   * @throws IOException
+   */
+  public ResponseEntity<AbstractResource> writeFileStream(PathResource pathResource) throws IOException {
     AssertTool.isNull(servletResponse, new NullPointerException("ServletResponse 不能为空"));
 
     if (!pathResource.exists()) {

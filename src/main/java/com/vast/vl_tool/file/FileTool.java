@@ -28,7 +28,7 @@ public class FileTool {
     };
 
     return Arrays.stream(pictureSuffixArray)
-      .filter(item -> fileName.toLowerCase().indexOf(item) != -1)
+      .filter(item -> fileName.toLowerCase().indexOf("." + item) != -1)
       .findAny()
       .orElse(null) != null;
   }
@@ -39,7 +39,7 @@ public class FileTool {
     };
 
     return Arrays.stream(videoSuffixArray)
-      .filter(item -> fileName.toLowerCase().indexOf(item) != -1)
+      .filter(item -> fileName.toLowerCase().indexOf("." + item) != -1)
       .findAny()
       .orElse(null) != null;
   }
@@ -75,9 +75,5 @@ public class FileTool {
 
   public static IOFormatHandler format() {
     return new IOFormatHandler();
-  }
-
-  public static void main(String[] args) throws IOException {
-    System.out.println(FileTool.format().content(FileBody.create("D:\\resource\\20220623052541_DJI_0557.jpg")).toEXIF().invoke());
   }
 }

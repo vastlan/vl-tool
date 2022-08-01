@@ -1,6 +1,6 @@
 package com.vast.vl_tool.http.config.annotation;
 
-import com.vast.vl_tool.http.response.AutoConfigurationResponseBodyAdvice;
+import com.vast.vl_tool.http.response.annotation.AutoConfigurationResponseBodyAdvice;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

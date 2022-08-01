@@ -1,4 +1,4 @@
-package com.vast.vl_tool.http.response;
+package com.vast.vl_tool.http.response.annotation;
 
 import java.util.ArrayList;
 import java.util.Arrays;

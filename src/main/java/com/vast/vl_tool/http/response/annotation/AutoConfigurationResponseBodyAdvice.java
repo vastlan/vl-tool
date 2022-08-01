@@ -1,7 +1,6 @@
-package com.vast.vl_tool.http.response;
+package com.vast.vl_tool.http.response.annotation;
 
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import javax.annotation.PostConstruct;
