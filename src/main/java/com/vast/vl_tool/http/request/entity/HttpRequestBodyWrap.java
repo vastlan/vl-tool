@@ -2,6 +2,7 @@ package com.vast.vl_tool.http.request.entity;
 
 import com.vast.vl_tool.http.request.annotaion.HttpProcessorAdepter;
 import com.vast.vl_tool.http.request.annotaion.HttpRequestProcessor;
+import org.springframework.http.MediaType;
 
 /**
  * @author vastlan
@@ -30,6 +31,7 @@ public class HttpRequestBodyWrap {
     FormDataHttpRequestBody formDataHttpRequestBody = new FormDataHttpRequestBody();
     createAndApply(formDataHttpRequestBody);
     httpRequestContent.setBody(formDataHttpRequestBody);
+    httpRequestContent.setMediaType(String.valueOf(MediaType.MULTIPART_FORM_DATA));
     return formDataHttpRequestBody;
   }
 

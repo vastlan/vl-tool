@@ -64,7 +64,7 @@ public class RestTemplateHttpRequestSender extends AbstractHttpRequestSender<Htt
     ResponseEntity responseEntity = null;
 
     try {
-      responseEntity = HttpTool.REST_TEMPLATE.exchange(httpRequestContent.getUrl(), HttpMethod.valueOf(httpRequestContent.getMethod().toUpperCase()), httpEntity, response.getType());
+      responseEntity = REST_TEMPLATE.exchange(httpRequestContent.getUrl(), HttpMethod.valueOf(httpRequestContent.getMethod().toUpperCase()), httpEntity, response.getType());
     } catch (HttpServerErrorException e) {
       e.printStackTrace();
       throw new HttpServerErrorException(e.getStatusCode());

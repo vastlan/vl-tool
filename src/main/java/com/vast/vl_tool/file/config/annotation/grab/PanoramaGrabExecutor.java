@@ -8,7 +8,6 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import okhttp3.ResponseBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
@@ -93,10 +92,14 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
 
       try {
         // @formatter:off
-        mediaResponseBody = HttpTool.createRequest()
-          .url(thumbUrl)
-          .method(HttpMethod.GET)
-          .sendForInputStream();
+        mediaResponseBody =
+          HttpTool.createRequest()
+            .url(thumbUrl)
+            .method()
+              .get()
+          .and()
+            .okHttp()
+            .sendForInputStream();
         // @formatter:on
 
         if (mediaResponseBody == null) {

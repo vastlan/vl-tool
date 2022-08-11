@@ -125,7 +125,7 @@ public abstract class AbstractEntityServiceBase<T extends EntityBase, ID, R exte
     }
   }
 
-  private void recordManipulationDate(T entity) {
+  protected void recordManipulationDate(T entity) {
     if (entity.getCreatedTime() == null) {
       entity.setCreatedTime(DateTool.getCurrentDateTimeOfDate());
     }

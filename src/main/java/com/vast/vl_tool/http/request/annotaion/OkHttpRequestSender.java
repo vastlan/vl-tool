@@ -54,7 +54,7 @@ public class OkHttpRequestSender extends AbstractHttpRequestSender<HttpRequestCo
     ResponseBody body = null;
     InputStream stream = null;
 
-    Response response = HttpTool.OK_HTTP_CLIENT.newCall(request).execute();
+    Response response = OK_HTTP_CLIENT.newCall(request).execute();
     body = response.body();
 
     stream = body.byteStream();
