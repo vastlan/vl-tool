@@ -13,14 +13,13 @@ import java.util.List;
  * @use
  *  tool
  *    .packet()
- *    .compress() / .decompress()
- *    .content(xxx)
+ *    .compress(xxx) / .decompress(xxx)
  *    .target(xxx)
  *    .zip() / .rar()
  *    .invoke()
  * @created 2022/7/27 10:26
  */
-public class IOPacketHandler extends AbstractIOHandler<List<FileBody>> {
+public class IOPacketHandler extends AbstractIOHandler<Object> {
 
   private Boolean isCompress;
 
@@ -29,18 +28,15 @@ public class IOPacketHandler extends AbstractIOHandler<List<FileBody>> {
   /** 压缩后存放路径 */
   private String targetPath;
 
-  public IOPacketHandler compress() {
+  public IOPacketHandler compress(List<FileBody> fileBodyList) {
     isCompress = true;
-    return this;
-  }
-
-  public IOPacketHandler decompress() {
-    isCompress = false;
-    return this;
-  }
-
-  public IOPacketHandler content(List<FileBody> fileBodyList) {
     setBody(fileBodyList);
+    return this;
+  }
+
+  public IOPacketHandler decompress(FileBody fileBody) {
+    isCompress = false;
+    setBody(fileBody);
     return this;
   }
 
@@ -51,7 +47,7 @@ public class IOPacketHandler extends AbstractIOHandler<List<FileBody>> {
 
   public IOPacketHandler zip() {
     if (isCompress) {
-      ioPacketExecutor = new ZipCompressExecutor(body, targetPath);
+      ioPacketExecutor = new ZipCompressExecutor((List<FileBody>) body, targetPath);
     } else {
       ioPacketExecutor = new ZipDecompressExecutor((FileBody) body, targetPath);
     }
@@ -76,7 +72,7 @@ public class IOPacketHandler extends AbstractIOHandler<List<FileBody>> {
   }
 
   @Override
-  public List<FileBody> handle() throws IOException {
+  public Object handle() throws IOException {
     if (ioPacketExecutor == null) {
       zip();
     }
@@ -89,8 +85,8 @@ public class IOPacketHandler extends AbstractIOHandler<List<FileBody>> {
     return (List<FileBody>) ioPacketExecutor.actionSuccessfulResult();
   }
 
-  private List<FileBody> handleDecompress() throws IOException {
+  private FileBody handleDecompress() throws IOException {
     ioPacketExecutor.action();
-    return (List<FileBody>) ioPacketExecutor.actionSuccessfulResult();
+    return (FileBody) ioPacketExecutor.actionSuccessfulResult();
   }
 }

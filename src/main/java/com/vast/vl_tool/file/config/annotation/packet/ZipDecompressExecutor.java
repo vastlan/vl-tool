@@ -49,6 +49,7 @@ public class ZipDecompressExecutor extends AbstractIODecompressExecutor {
 
     // 开始解压
     Enumeration<? extends ZipEntry> entries = zipFile.entries();
+    System.out.println("开始解压 " + fileBody.getFileAbsolutePath());
 
     while (entries.hasMoreElements()) {
       ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -77,6 +78,7 @@ public class ZipDecompressExecutor extends AbstractIODecompressExecutor {
       }
     }
 
+    System.out.println(fileBody.getFileName() + " 解压完毕 " + targetPath);
     setActionSuccessfulResult(FileBody.create(targetPath));
   }
 }
