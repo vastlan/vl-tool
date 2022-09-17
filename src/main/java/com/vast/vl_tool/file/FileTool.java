@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 /**
@@ -51,6 +52,10 @@ public class FileTool {
 
     String fileName = file.getName();
     return StringUtils.hasLength(fileName) && fileName.indexOf(".") != -1;
+  }
+
+  public static void delete(FileBody fileBody) throws IOException {
+    Files.delete(fileBody.getPath());
   }
 
   public static IOCreationHandler create() {

@@ -21,7 +21,11 @@ public class IOFormatHandler extends AbstractIOHandler<Object> {
   }
 
   public IOFormatHandler toEXIF() {
-    ExifFileBody exifFileBody = ExifFileBody.create((FileBody) body);
+    return toEXIF((FileBody) body);
+  }
+
+  public IOFormatHandler toEXIF(FileBody fileBody) {
+    ExifFileBody exifFileBody = ExifFileBody.create(fileBody);
     ioFormatExecutor = new FormatToEXIFExecutor(exifFileBody);
     return this;
   }

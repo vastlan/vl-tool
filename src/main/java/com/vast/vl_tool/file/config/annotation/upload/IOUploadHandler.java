@@ -3,12 +3,16 @@ package com.vast.vl_tool.file.config.annotation.upload;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -64,10 +68,22 @@ public class IOUploadHandler extends AbstractIOHandler<FileBody> {
       return null;
     }
 
-    try (FileOutputStream fileOutputStream = new FileOutputStream(convertFile)) {
-      fileOutputStream.write (multipartFile.getBytes());
-      return body;
-    }
+//    BufferedInputStream bufferedInputStream = new BufferedInputStream(multipartFile.getInputStream());
+//    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(body.getPath()));
+//
+//    byte[] buffer = new byte[10];
+//    int len = 0;
+//
+//    while ((len = bufferedInputStream.read(buffer)) != -1) {
+//      bufferedOutputStream.write(buffer, 0, len);
+//    }
+//
+//    bufferedOutputStream.close();
+//    bufferedInputStream.close();
+
+    readAndWrite(multipartFile.getInputStream(), Files.newOutputStream(body.getPath()));
+
+    return body;
   }
 
   private FileBody upload() throws IOException {
@@ -89,9 +105,36 @@ public class IOUploadHandler extends AbstractIOHandler<FileBody> {
     FileBody newFileBody = FileBody.create(folderAbsolutePath, finalFileName + "-副本" + num + fileName.substring(fileName.lastIndexOf(".") + 1));
     newFileBody = FileTool.create().createFile(newFileBody).invoke();
 
-    try (FileOutputStream fileOutputStream = new FileOutputStream(newFileBody.getFile())) {
-      fileOutputStream.write (multipartFile.getBytes());
-      return newFileBody;
+//    BufferedInputStream bufferedInputStream = new BufferedInputStream(multipartFile.getInputStream());
+//    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(Files.newOutputStream(newFileBody.getPath()));
+//
+//    byte[] buffer = new byte[10];
+//    int len = 0;
+//
+//    while ((len = bufferedInputStream.read(buffer)) != -1) {
+//      bufferedOutputStream.write(buffer, 0, len);
+//    }
+//
+//    bufferedOutputStream.close();
+//    bufferedInputStream.close();
+
+    readAndWrite(multipartFile.getInputStream(), Files.newOutputStream(newFileBody.getPath()));
+
+    return newFileBody;
+  }
+
+  /** 以缓冲区的形式读取文件，适配读取大文件数据，避免内存溢出 */
+  public void readAndWrite(InputStream inputStream, OutputStream outputStream) throws IOException {
+    byte[] buffer = new byte[10];
+    int len = 0;
+
+    try (
+     BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+      BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+   ) {
+     while ((len = bufferedInputStream.read(buffer)) != -1) {
+       bufferedOutputStream.write(buffer, 0, len);
+     }
     }
   }
 }

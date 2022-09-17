@@ -12,7 +12,7 @@ import java.io.IOException;
  *  tool
  *    .grab()
  *    .content(xxx)
- *    .target()
+ *    .target(xxx)
  *    .picture()
  *      .scale(x)
  *     .and()
@@ -31,16 +31,34 @@ public class IOGrabHandler extends AbstractIOHandler<Object> {
     return (PictureGrabExecutor) ioGrabExecutor;
   }
 
+  public PictureGrabExecutor picture(FileBody fileBody, String targetPath) {
+    content(fileBody);
+    target(targetPath);
+    return picture();
+  }
+
   public VideoGrabExecutor video() {
     ioGrabExecutor = new VideoGrabExecutor((FileBody) body, targetPath);
     createAndApplyAdapter();
     return (VideoGrabExecutor) ioGrabExecutor;
   }
 
-  public IOGrabHandler panorama() {
+  public VideoGrabExecutor video(FileBody fileBody, String targetPath) {
+    content(fileBody);
+    target(targetPath);
+    return video();
+  }
+
+  public PanoramaGrabExecutor panorama() {
     ioGrabExecutor = new PanoramaGrabExecutor(body.toString(), targetPath);
     createAndApplyAdapter();
-    return this;
+    return (PanoramaGrabExecutor) ioGrabExecutor;
+  }
+
+  public PanoramaGrabExecutor panorama(String uri, String targetPath) {
+    content(uri);
+    target(targetPath);
+    return panorama();
   }
 
   public IOGrabHandler content(Object content) {
