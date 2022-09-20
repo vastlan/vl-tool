@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.grab;
 
+import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.time.DateTool;
@@ -43,6 +44,9 @@ public class PictureGrabExecutor extends AbstractIOGrabExecutor {
 
   @Override
   public void execute() throws IOException {
+    AssertTool.isTrue(scale < 0 || scale > 1, new IllegalArgumentException("图片大小 scale 参数区间为 0-1"));
+    AssertTool.isTrue(outputQuality < 0 || outputQuality > 1, new IllegalArgumentException("图片质量压缩比例 outputQuality 参数区间为 0-1"));
+
     if (!StringUtils.hasLength(grabbedFileName)) {
       grabbedFileName(String.format("%s_thumbnail_%s", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), fileBody.getFileName()));
     }

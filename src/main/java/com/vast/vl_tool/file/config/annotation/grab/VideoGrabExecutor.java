@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file.config.annotation.grab;
 
+import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.time.DateTool;
@@ -27,6 +28,12 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
   /** 忽略截取帧数 */
   private Integer frameNumber = 5;
 
+  private Integer hints = Image.SCALE_SMOOTH;
+
+  private Double width = 0.5;
+
+  private Double height = 0.5;
+
   public VideoGrabExecutor(FileBody fileBody, String targetPath) {
     super(fileBody, targetPath);
     this.fileBody = fileBody;
@@ -37,8 +44,26 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
     return this;
   }
 
+  public VideoGrabExecutor width(Double width) {
+    this.width = width;
+    return this;
+  }
+
+  public VideoGrabExecutor height(Double height) {
+    this.height = height;
+    return this;
+  }
+
+  public VideoGrabExecutor hints(Integer hints) {
+    this.hints = hints;
+    return this;
+  }
+
   @Override
   public void execute() throws IOException {
+    AssertTool.isTrue(width < 0 || width > 1, new IllegalArgumentException("图片宽度比例 width 参数区间为 0-1"));
+    AssertTool.isTrue(height < 0 || height > 1, new IllegalArgumentException("图片高度比例 height 参数区间为 0-1"));
+
     FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(fileBody.getFile());
 
     if (videoGrabber == null) {
@@ -72,13 +97,13 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
       int frameImagePrimaryWidth = frameBufferedImage.getWidth();
       int frameImagePrimaryHeight = frameBufferedImage.getHeight();
 
-      int thumbnailWidth = (int) Math.floor(frameImagePrimaryWidth * 0.5);
-      int thumbnailHeight = (int) Math.floor(frameImagePrimaryHeight * 0.5);
+      int thumbnailWidth = (int) Math.floor(frameImagePrimaryWidth * width);
+      int thumbnailHeight = (int) Math.floor(frameImagePrimaryHeight * height);
 
       BufferedImage thumbnailBufferedImage = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_3BYTE_BGR);
       thumbnailBufferedImage
         .getGraphics()
-        .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, Image.SCALE_SMOOTH), 0, 0, null);
+        .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, hints), 0, 0, null);
 
       FileBody targetFileBody = FileBody.create(targetPath);
 

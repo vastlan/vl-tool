@@ -33,9 +33,23 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
 
   private String url;
 
+  private Integer width = 660;
+
+  private Integer height = 280;
+
   public PanoramaGrabExecutor(String url, String targetPath) {
     super(url, targetPath);
     this.url = url;
+  }
+
+  public PanoramaGrabExecutor width(Integer width) {
+    this.width = width;
+    return this;
+  }
+
+  public PanoramaGrabExecutor height(Integer height) {
+    this.height = height;
+    return this;
   }
 
   @Override
@@ -116,7 +130,7 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
           FileTool.create().createFile(fileBody);
         }
 
-        BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), 660, 280);
+        BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), width, height);
         ImageIO.write(bufferedImage, "jpg", fileBody.getFile());
 
         setGrabResult(fileBody);

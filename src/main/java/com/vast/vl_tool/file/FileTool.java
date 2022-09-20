@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
@@ -140,9 +141,5 @@ public class FileTool {
 
   public static IOFormatHandler format() {
     return new IOFormatHandler();
-  }
-
-  public static void main(String[] args) {
-
   }
 }
