@@ -20,7 +20,7 @@ public class FileCreationExecutor implements IOCreationExecutor<FileBody> {
 
   @Override
   public FileBody create(FileBody fileBody) throws IOException {
-    AssertTool.isTrue(!FileTool.isFile(fileBody.getFile()), new IllegalArgumentException("非文件路径参数异常"));
+    AssertTool.isTrue(!fileBody.isFile(), new IllegalArgumentException("非文件路径参数异常"));
 
     this.fileBody = fileBody;
 

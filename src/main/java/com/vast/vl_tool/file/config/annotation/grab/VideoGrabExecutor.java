@@ -80,15 +80,21 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
         .getGraphics()
         .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, Image.SCALE_SMOOTH), 0, 0, null);
 
-      String videoFileName = fileBody.getFileName();
+      FileBody targetFileBody = FileBody.create(targetPath);
 
-      if (!StringUtils.hasLength(grabbedFileName)) {
-        grabbedFileName(String.format("%s_thumbnail_%s_%d", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), videoFileName.substring(0, videoFileName.lastIndexOf(".")), frameNumber));
+      if (!targetFileBody.isFile()) {
+        String videoFileName = this.fileBody.getFileName();
+
+        if (!StringUtils.hasLength(grabbedFileName)) {
+          grabbedFileName(String.format("%s_thumbnail_%s_%d", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), videoFileName.substring(0, videoFileName.lastIndexOf(".")), frameNumber));
+        }
+
+        targetFileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
       }
 
       FileBody thumbnailFileBody =
         FileTool.create()
-          .createFile(FileBody.create(targetPath + File.separator + grabbedFileName()))
+          .createFile(targetFileBody)
           .invoke();
 
       ImageIO.write(thumbnailBufferedImage, "jpg", thumbnailFileBody.getFile());

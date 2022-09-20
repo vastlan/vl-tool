@@ -13,7 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -23,35 +26,92 @@ import java.util.Arrays;
  */
 public class FileTool {
 
-  public static boolean isPicture(String fileName) {
-    String[] pictureSuffixArray = new String[] {
-      "jpg", "jpeg", "png", "bmp", "gif", "tif"
-    };
+  /**
+   * @param content 可以为 文件路劲、文件名
+   * @return 媒体文件类型
+   */
+  public static String getContentType(String content) {
+    try {
+      return Files.probeContentType(Path.of(content));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    return Arrays.stream(pictureSuffixArray)
-      .filter(item -> fileName.toLowerCase().indexOf("." + item) != -1)
-      .findAny()
-      .orElse(null) != null;
+    return null;
   }
 
-  public static boolean isVideo(String fileName) {
-    String[] videoSuffixArray = new String[] {
-      "mp4", "flv", "wmv"
-    };
+  public static boolean isPicture(String content) {
+    String contentType = getContentType(content);
+    return contentType != null && contentType.contains("image");
+  }
 
-    return Arrays.stream(videoSuffixArray)
-      .filter(item -> fileName.toLowerCase().indexOf("." + item) != -1)
-      .findAny()
-      .orElse(null) != null;
+  public static boolean isVideo(String content) {
+    String contentType = getContentType(content);
+    return contentType != null && contentType.contains("video");
+  }
+
+  public static boolean isText(String content) {
+    String contentType = getContentType(content);
+    return contentType != null && contentType.contains("text");
+  }
+
+  public static boolean isApplication(String content) {
+    String contentType = getContentType(content);
+    return contentType != null && contentType.contains("application");
   }
 
   public static Boolean isFile(File file) {
-    if (file.exists()) {
-      return file.isFile();
+    return isFile(FileBody.create(file));
+  }
+
+  public static Boolean isFile(Path path) {
+    return isFile(FileBody.create(path));
+  }
+
+  public static Boolean isFile(FileBody fileBody) {
+    Path path = fileBody.getPath();
+
+    if (Files.exists(path)) {
+      return fileBody.getFile().isFile();
     }
 
-    String fileName = file.getName();
-    return StringUtils.hasLength(fileName) && fileName.indexOf(".") != -1;
+    if (isMedia(fileBody)) {
+      return true;
+    }
+
+    try {
+      Files.readAllLines(path);
+      return true;
+    }
+    catch (NoSuchFileException e) {
+      e.printStackTrace();
+      return false;
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+
+  public static Boolean isMedia(FileBody fileBody) {
+    Path path = fileBody.getPath();
+
+    if (Files.exists(path)) {
+      return fileBody.getFile().isFile();
+    }
+
+    try {
+      Files.readAllLines(path);
+    }
+    catch (MalformedInputException e) {
+      System.out.println("媒体文件");
+      return true;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return false;
   }
 
   public static void delete(FileBody fileBody) throws IOException {
@@ -80,5 +140,9 @@ public class FileTool {
 
   public static IOFormatHandler format() {
     return new IOFormatHandler();
+  }
+
+  public static void main(String[] args) {
+
   }
 }

@@ -47,7 +47,11 @@ public class PictureGrabExecutor extends AbstractIOGrabExecutor {
       grabbedFileName(String.format("%s_thumbnail_%s", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), fileBody.getFileName()));
     }
 
-    FileBody thumbnailFileBody = FileBody.create(targetPath + File.separator + grabbedFileName());
+    FileBody thumbnailFileBody = FileBody.create(targetPath);
+
+    if (!thumbnailFileBody.isFile()) {
+      thumbnailFileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
+    }
 
     if (thumbnailFileBody.notExistAndIsFile()) {
       FileTool.create().createFile(thumbnailFileBody).invoke();
@@ -62,6 +66,8 @@ public class PictureGrabExecutor extends AbstractIOGrabExecutor {
         .scale(scale)
         .outputQuality(outputQuality)
         .toOutputStream(fileOutputStream);
+
+      setGrabResult(thumbnailFileBody);
     } finally {
       if (fileOutputStream != null) {
         fileOutputStream.close();

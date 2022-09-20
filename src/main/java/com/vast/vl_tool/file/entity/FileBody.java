@@ -32,6 +32,8 @@ public class FileBody {
 
   private String fileName;
 
+  private String fileSuffix;
+
   public FileBody(Path path) {
     this.path = path;
     this.file = path.toFile();
@@ -69,7 +71,11 @@ public class FileBody {
   }
 
   public boolean notExistAndIsFile() {
-    return !existFile() && FileTool.isFile(file);
+    return !existFile() && isFile();
+  }
+
+  public boolean isFile() {
+    return this.fileSuffix != null && this.fileSuffix.length() > 0;
   }
 
   private void init() {
@@ -77,5 +83,11 @@ public class FileBody {
     this.pathRoot = path.getRoot().toString();
     this.fileRelativePath = fileAbsolutePath.replace(pathRoot, "\\");
     this.fileName = path.getFileName().toString();
+
+    int suffixPointIdx = this.fileName.lastIndexOf(".");
+
+    if (suffixPointIdx != -1) {
+      this.fileSuffix = this.fileName.substring(suffixPointIdx);
+    }
   }
 }

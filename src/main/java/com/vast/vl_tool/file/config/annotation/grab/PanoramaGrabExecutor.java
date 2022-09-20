@@ -106,7 +106,11 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
           throw new IOException("获取截取源失败");
         }
 
-        FileBody fileBody = FileBody.create(targetPath + File.separator + grabbedFileName());
+        FileBody fileBody = FileBody.create(targetPath);
+
+        if (!fileBody.isFile()) {
+          fileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
+        }
 
         if (fileBody.notExistAndIsFile()) {
           FileTool.create().createFile(fileBody);

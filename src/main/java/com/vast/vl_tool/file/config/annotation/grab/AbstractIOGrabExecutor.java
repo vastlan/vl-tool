@@ -60,7 +60,7 @@ public abstract class AbstractIOGrabExecutor extends AbstractIOExecutor<IOGrabHa
     return this;
   }
 
-  public String grabbedFileName() {
+  public String getGrabbedFileName() {
     if (StringUtils.hasLength(grabbedFileName)) {
       int idx = grabbedFileName.lastIndexOf(".");
 
