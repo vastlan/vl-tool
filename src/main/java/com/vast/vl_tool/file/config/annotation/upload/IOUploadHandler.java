@@ -3,8 +3,6 @@ package com.vast.vl_tool.file.config.annotation.upload;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;

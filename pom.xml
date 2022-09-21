@@ -135,13 +135,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Apache Commons IO 读取大文件-->
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>org-apache-commons-io</artifactId>
-            <version>RELEASE113</version>
-        </dependency>
-
         <dependency>
             <groupId>com.adobe.xmp</groupId>
             <artifactId>xmpcore</artifactId>
