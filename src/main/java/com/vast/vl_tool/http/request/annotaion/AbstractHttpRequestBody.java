@@ -13,7 +13,7 @@ public abstract class AbstractHttpRequestBody<T> extends HttpProcessorAdepter<Ht
   protected final Map<String, Object> PARAM_MAP = new HashMap<>();
 
   @Override
-  public HttpRequestBody put(String key, Object value) {
+  public AbstractHttpRequestBody put(String key, Object value) {
     PARAM_MAP.put(key, value);
     return this;
   }

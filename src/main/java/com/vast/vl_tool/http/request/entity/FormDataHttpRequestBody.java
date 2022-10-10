@@ -21,7 +21,7 @@ public class FormDataHttpRequestBody extends HttpProcessorAdepter<HttpRequestPro
   }
 
   @Override
-  public HttpRequestBody put(String key, Object value) {
+  public FormDataHttpRequestBody put(String key, Object value) {
     PARAM_MAP.add(key, value);
     return this;
   }

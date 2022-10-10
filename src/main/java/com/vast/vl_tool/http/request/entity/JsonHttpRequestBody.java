@@ -1,7 +1,7 @@
 package com.vast.vl_tool.http.request.entity;
 
 import com.vast.vl_tool.http.request.annotaion.AbstractHttpRequestBody;
-import com.vast.vl_tool.json.JsonTool;
+import com.vast.vl_tool.format.JsonTool;
 
 /**
  * @author vastlan

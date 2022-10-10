@@ -1,7 +1,8 @@
-package com.vast.vl_tool.json;
+package com.vast.vl_tool.format;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vast.vl_tool.file.FileTool;
 
 import java.util.Map;
 
