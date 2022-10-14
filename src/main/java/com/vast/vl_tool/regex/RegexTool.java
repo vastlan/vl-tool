@@ -27,7 +27,7 @@ public class RegexTool {
     return Pattern.compile(DATE_REGEX_TML).matcher(dateStr).matches();
   }
 
-//  public static void main(String[] args) {
+  public static void main(String[] args) {
 //    String str = "/***";
 //    String regex = "\\/(\\*|\\*\\*|\\*\\*\\*)";
 //    System.out.println(Pattern.compile(regex).matcher(str).matches());
@@ -38,5 +38,5 @@ public class RegexTool {
 //    String regex = "\\/user\\/.*?";
 //    System.out.println(Pattern.compile(regex).matcher(apiOne).matches());
 //    System.out.println(Pattern.compile(regex).matcher(apiTwo).matches());
-//  }
+  }
 }

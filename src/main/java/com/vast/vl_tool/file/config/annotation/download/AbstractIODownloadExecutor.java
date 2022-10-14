@@ -63,8 +63,8 @@ public abstract class AbstractIODownloadExecutor extends AbstractIOExecutor impl
   public boolean checkParamValidity() {
     Assert.notNull(response, "HttpServletResponse could not be null");
     Assert.notNull(content, "Content could not be null");
-    Assert.isTrue(!StringUtils.hasLength(fileName), "FileName could not be null");
-    Assert.isTrue(fileName.lastIndexOf(".") == -1 && !StringUtils.hasLength(fileNameSuffix), "FileNameSuffix could not be null");
+    Assert.isTrue(StringUtils.hasLength(fileName), "FileName could not be null");
+    Assert.isTrue(fileName.lastIndexOf(".") != -1 || StringUtils.hasLength(fileNameSuffix), "FileNameSuffix could not be null");
 
     return true;
   }

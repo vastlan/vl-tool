@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vast</groupId>
     <artifactId>vl-tool</artifactId>
-    <version>1.1.14</version>
+    <version>1.1.15</version>
     <name>vl-tool</name>
     <description>Demo project for Spring Boot</description>
     <properties>
