@@ -8,8 +8,10 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
 import com.vast.vl_tool.file.entity.ExifFileBody;
 import com.vast.vl_tool.file.entity.FileBody;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author vastlan
@@ -33,8 +35,10 @@ public class FormatToEXIFExecutor extends AbstractIOFormatExecutor {
     ExifFileBody exifFileBody = (ExifFileBody) body;
     FileBody fileBody = exifFileBody.getFileBody();
 
+    Assert.notNull(fileBody.getInputStream(), "stream must not be null");
+
     try {
-      Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getFile());
+      Metadata metadata = JpegMetadataReader.readMetadata(fileBody.getInputStream());
 
       Iterable<Directory> directories = metadata.getDirectories();
 

@@ -68,7 +68,8 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
           .toString()
           .replace("window.", "var");
 
-      String query = new URL(url).getQuery();
+      URL connectionUrl = new URL(this.url);
+      String query = connectionUrl.getQuery();
       sceneId = query != null ? Integer.valueOf(query.split("=")[1]) : 0;
 
       ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) SCRIPT_ENGINE.eval(scriptContent);
@@ -127,7 +128,7 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
         }
 
         if (fileBody.notExistAndIsFile()) {
-          FileTool.create().createFile(fileBody);
+          FileTool.create().createFile(fileBody).invoke();
         }
 
         BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), width, height);
@@ -136,6 +137,10 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
         setGrabResult(fileBody);
       } finally {
         if (mediaResponseBody != null) {
+          if (mediaResponseBody.byteStream() != null) {
+            mediaResponseBody.byteStream().close();
+          }
+
           mediaResponseBody.close();
         }
       }

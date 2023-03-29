@@ -64,7 +64,7 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
     AssertTool.isTrue(width < 0 || width > 1, new IllegalArgumentException("图片宽度比例 width 参数区间为 0-1"));
     AssertTool.isTrue(height < 0 || height > 1, new IllegalArgumentException("图片高度比例 height 参数区间为 0-1"));
 
-    FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(fileBody.getFile());
+    FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(fileBody.getInputStream());
 
     if (videoGrabber == null) {
       throw new IOException("解析文件源异常");

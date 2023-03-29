@@ -12,6 +12,6 @@ public class JsonHttpRequestBody extends AbstractHttpRequestBody<String> {
 
   @Override
   public String body() {
-    return JsonTool.parseToJSONString(PARAM_MAP);
+    return JsonTool.parseToJSONString(paramMap);
   }
 }

@@ -4,6 +4,8 @@ import com.vast.vl_tool.file.FileTool;
 import lombok.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +36,8 @@ public class FileBody {
 
   private String fileSuffix;
 
+  private InputStream inputStream;
+
   public FileBody(Path path) {
     this.path = path;
     this.file = path.toFile();
@@ -44,6 +48,10 @@ public class FileBody {
     this.file = file;
     this.path = Paths.get(file.getAbsolutePath());
     init();
+  }
+
+  public FileBody(InputStream inputStream) {
+    this.setInputStream(inputStream);
   }
 
   public static FileBody create(Path path) {
@@ -89,5 +97,31 @@ public class FileBody {
     if (suffixPointIdx != -1) {
       this.fileSuffix = this.fileName.substring(suffixPointIdx);
     }
+  }
+
+  public void setInputStream(InputStream inputStream) {
+    try {
+      if (path != null) {
+        this.inputStream = Files.newInputStream(path);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      return;
+    }
+
+    this.inputStream = inputStream;
+  }
+
+  public InputStream getInputStream() {
+    try {
+      if (path != null) {
+        return Files.newInputStream(path);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    return inputStream;
   }
 }

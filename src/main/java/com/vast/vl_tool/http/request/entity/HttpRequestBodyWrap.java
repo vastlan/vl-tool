@@ -3,6 +3,10 @@ package com.vast.vl_tool.http.request.entity;
 import com.vast.vl_tool.http.request.annotaion.HttpProcessorAdepter;
 import com.vast.vl_tool.http.request.annotaion.HttpRequestProcessor;
 import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author vastlan
@@ -24,6 +28,20 @@ public class HttpRequestBodyWrap {
     JsonHttpRequestBody jsonHttpRequestBody = new JsonHttpRequestBody();
     createAndApply(jsonHttpRequestBody);
     httpRequestContent.setBody(jsonHttpRequestBody);
+    return jsonHttpRequestBody;
+  }
+
+  public JsonHttpRequestBody json(Map<String, Object> param) {
+    Assert.notNull(param, "param must not be null");
+    JsonHttpRequestBody jsonHttpRequestBody = new JsonHttpRequestBody();
+    createAndApply(jsonHttpRequestBody);
+
+    param.keySet().stream().forEach(key -> jsonHttpRequestBody.put(key, param.get(key)));
+    return jsonHttpRequestBody;
+  }
+
+  public JsonHttpRequestObjectBody json(Object param) {
+    JsonHttpRequestObjectBody jsonHttpRequestBody = new JsonHttpRequestObjectBody(param);
     return jsonHttpRequestBody;
   }
 

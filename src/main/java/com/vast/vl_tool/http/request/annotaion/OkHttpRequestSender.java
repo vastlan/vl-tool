@@ -22,8 +22,6 @@ import java.util.Map;
  */
 public class OkHttpRequestSender extends AbstractHttpRequestSender<HttpRequestContent> {
 
-  public static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
-
   private HttpRequestContent httpRequestContent;
 
   public OkHttpRequestSender(HttpRequestContent httpRequestContent) {
@@ -51,15 +49,33 @@ public class OkHttpRequestSender extends AbstractHttpRequestSender<HttpRequestCo
     }
 
     Request request = requestBuilder.build();
-    ResponseBody body = null;
-    InputStream stream = null;
+    Response response = null;
+    ResponseBody body;
 
-    Response response = OK_HTTP_CLIENT.newCall(request).execute();
-    body = response.body();
+    OkHttpClient okHttpClient = new OkHttpClient();
 
-    stream = body.byteStream();
+    try {
+      response = okHttpClient.newCall(request).execute();
+      body = response.body();
 
-    return body;
+      return body;
+    } finally {
+      if (response != null) {
+        response.close();
+      }
+
+      // 清除连接池，注意清除后，连接池的守护线程可能会立刻退出。
+      if (okHttpClient.cache() != null) {
+        okHttpClient.cache().close();
+      }
+
+      // 清除连接池，注意清除后，连接池的守护线程可能会立刻退出。
+      okHttpClient.connectionPool().evictAll();
+
+      // 自动释放，释放后将来再调用 call 的时候会被拒接
+      okHttpClient.dispatcher().executorService().shutdown();
+    }
+
   }
 
   @Override

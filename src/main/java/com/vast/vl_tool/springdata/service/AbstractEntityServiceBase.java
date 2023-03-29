@@ -29,6 +29,10 @@ public abstract class AbstractEntityServiceBase<T extends EntityBase, ID, R exte
     return entityRepository.findAll();
   }
 
+  public List<T> listByIds(Iterable<ID> idList) {
+    return entityRepository.findAllById(idList);
+  }
+
   public List<T> createAll(List<T> entityList) {
     entityList.forEach(entity -> recordManipulationDate(entity));
     return entityRepository.saveAllAndFlush(entityList);

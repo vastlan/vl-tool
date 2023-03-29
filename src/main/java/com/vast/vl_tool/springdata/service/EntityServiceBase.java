@@ -13,6 +13,8 @@ import java.util.List;
 public interface EntityServiceBase<T extends EntityBase<ID>, ID> {
   List<T> list();
 
+  List<T> listByIds(Iterable<ID> idList);
+
   List<T> createAll(List<T> entityList);
 
   List<T> updateAll(List<T> entityList);

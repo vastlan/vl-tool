@@ -6,8 +6,7 @@ package com.vast.vl_tool.http.request.annotaion;
  * @created 2022/7/29 15:42
  */
 
-public interface HttpRequestBody<T> {
-  T body();
+public interface HttpRequestBody<T> extends RequestBody<T> {
 
   HttpRequestBody put(String key, Object value);
 }

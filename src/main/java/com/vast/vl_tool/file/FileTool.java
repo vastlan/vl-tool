@@ -5,20 +5,22 @@ import com.vast.vl_tool.file.config.annotation.download.IODownloadHandler;
 import com.vast.vl_tool.file.config.annotation.format.IOFormatHandler;
 import com.vast.vl_tool.file.config.annotation.grab.IOGrabHandler;
 import com.vast.vl_tool.file.config.annotation.packet.IOPacketHandler;
+import com.vast.vl_tool.file.config.annotation.upload.AliYunOssUploadHandler;
 import com.vast.vl_tool.file.config.annotation.upload.IOUploadHandler;
+import com.vast.vl_tool.file.config.annotation.upload.OssUploadHandler;
+import com.vast.vl_tool.file.constant.AliYunOssClient;
 import com.vast.vl_tool.file.entity.FileBody;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.Paths;
 
 /**
  * @author vastlan
@@ -125,6 +127,10 @@ public class FileTool {
 
   public static IOUploadHandler upload(MultipartFile multipartFile) {
     return new IOUploadHandler(multipartFile);
+  }
+
+  public static OssUploadHandler uploadToOss() {
+    return new OssUploadHandler();
   }
 
   public static IODownloadHandler download(HttpServletResponse httpServletResponse) {

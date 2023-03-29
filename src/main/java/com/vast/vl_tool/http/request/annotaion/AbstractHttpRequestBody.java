@@ -10,11 +10,16 @@ import java.util.Map;
  */
 public abstract class AbstractHttpRequestBody<T> extends HttpProcessorAdepter<HttpRequestProcessor> implements HttpRequestBody<T> {
 
-  protected final Map<String, Object> PARAM_MAP = new HashMap<>();
+  protected Map<String, Object> paramMap = new HashMap<>();
 
   @Override
   public AbstractHttpRequestBody put(String key, Object value) {
-    PARAM_MAP.put(key, value);
+    paramMap.put(key, value);
     return this;
+  }
+
+  @Override
+  public HttpRequestProcessor and() {
+    return super.and();
   }
 }
