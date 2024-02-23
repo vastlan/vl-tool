@@ -19,6 +19,11 @@ public abstract class AbstractHttpRequestBody<T> extends HttpProcessorAdepter<Ht
   }
 
   @Override
+  public HttpRequestBody setBody(T t) {
+    return null;
+  }
+
+  @Override
   public HttpRequestProcessor and() {
     return super.and();
   }

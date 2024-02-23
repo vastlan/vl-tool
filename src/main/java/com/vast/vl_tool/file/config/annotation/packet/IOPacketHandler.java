@@ -3,6 +3,7 @@ package com.vast.vl_tool.file.config.annotation.packet;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +26,22 @@ public class IOPacketHandler extends AbstractIOHandler<Object> {
 
   private IOPacketExecutor ioPacketExecutor;
 
+  private String fileName;
+
+  private String fileExtensionName;
+
   /** 压缩后存放路径 */
   private String targetPath;
+
+  public IOPacketHandler fileName(String fileName) {
+    this.fileName = fileName;
+    return this;
+  }
+
+  public IOPacketHandler fileExtensionName(String extensionName) {
+    this.fileExtensionName = extensionName;
+    return this;
+  }
 
   public IOPacketHandler compress(List<FileBody> fileBodyList) {
     isCompress = true;
@@ -46,22 +61,41 @@ public class IOPacketHandler extends AbstractIOHandler<Object> {
   }
 
   public IOPacketHandler zip() {
-    if (isCompress) {
-      ioPacketExecutor = new ZipCompressExecutor((List<FileBody>) body, targetPath);
+    if (StringUtils.hasLength(fileName)) {
+      if (StringUtils.hasLength(fileExtensionName)) {
+        zip(fileName, fileExtensionName);
+      } else {
+        zip(fileName);
+      }
     } else {
-      ioPacketExecutor = new ZipDecompressExecutor((FileBody) body, targetPath);
+      ioPacketExecutor = new ZipCompressExecutor((List<FileBody>) body, targetPath);
     }
 
     return this;
   }
 
-  public IOPacketHandler rar() {
-    if (isCompress) {
-      Assert.notNull(ioPacketExecutor, "rar压缩功能暂未实现");
-    } else {
-      ioPacketExecutor = new RarDecompressExecutor((FileBody) body, targetPath);
-    }
+  public IOPacketHandler zip(String fileName) {
+    ioPacketExecutor = new ZipCompressExecutor((List<FileBody>) body, targetPath, fileName);
+    return this;
+  }
 
+  public IOPacketHandler zip(String fileName, String fileExtensionName) {
+    ioPacketExecutor = new ZipCompressExecutor((List<FileBody>) body, targetPath, fileName, fileExtensionName);
+    return this;
+  }
+
+  public IOPacketHandler unzip() {
+    ioPacketExecutor = new ZipDecompressExecutor((FileBody) body, targetPath);
+    return this;
+  }
+
+  public IOPacketHandler rar() {
+    Assert.notNull(ioPacketExecutor, "rar压缩功能暂未实现");
+    return this;
+  }
+
+  public IOPacketHandler unrar() {
+    ioPacketExecutor = new RarDecompressExecutor((FileBody) body, targetPath);
     return this;
   }
 
@@ -80,9 +114,9 @@ public class IOPacketHandler extends AbstractIOHandler<Object> {
     return isCompress ? handleCompress() : handleDecompress();
   }
 
-  private List<FileBody> handleCompress() throws IOException {
+  private FileBody handleCompress() throws IOException {
     ioPacketExecutor.action();
-    return (List<FileBody>) ioPacketExecutor.actionSuccessfulResult();
+    return (FileBody) ioPacketExecutor.actionSuccessfulResult();
   }
 
   private FileBody handleDecompress() throws IOException {

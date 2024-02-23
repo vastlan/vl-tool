@@ -5,22 +5,18 @@ import com.vast.vl_tool.file.config.annotation.download.IODownloadHandler;
 import com.vast.vl_tool.file.config.annotation.format.IOFormatHandler;
 import com.vast.vl_tool.file.config.annotation.grab.IOGrabHandler;
 import com.vast.vl_tool.file.config.annotation.packet.IOPacketHandler;
-import com.vast.vl_tool.file.config.annotation.upload.AliYunOssUploadHandler;
 import com.vast.vl_tool.file.config.annotation.upload.IOUploadHandler;
 import com.vast.vl_tool.file.config.annotation.upload.OssUploadHandler;
-import com.vast.vl_tool.file.constant.AliYunOssClient;
 import com.vast.vl_tool.file.entity.FileBody;
-import org.springframework.web.multipart.MultipartFile;
+import com.vast.vl_tool.time.DateTool;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.MalformedInputException;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 /**
  * @author vastlan
@@ -72,49 +68,8 @@ public class FileTool {
   }
 
   public static Boolean isFile(FileBody fileBody) {
-    Path path = fileBody.getPath();
-
-    if (Files.exists(path)) {
-      return fileBody.getFile().isFile();
-    }
-
-    if (isMedia(fileBody)) {
-      return true;
-    }
-
-    try {
-      Files.readAllLines(path);
-      return true;
-    }
-    catch (NoSuchFileException e) {
-      e.printStackTrace();
-      return false;
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return false;
-  }
-
-  public static Boolean isMedia(FileBody fileBody) {
-    Path path = fileBody.getPath();
-
-    if (Files.exists(path)) {
-      return fileBody.getFile().isFile();
-    }
-
-    try {
-      Files.readAllLines(path);
-    }
-    catch (MalformedInputException e) {
-      System.out.println("媒体文件");
-      return true;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return false;
+    String contentType = getContentType(fileBody.getFileAbsolutePath());
+    return StringUtils.hasLength(contentType);
   }
 
   public static void delete(FileBody fileBody) throws IOException {
@@ -125,8 +80,8 @@ public class FileTool {
     return new IOCreationHandler();
   }
 
-  public static IOUploadHandler upload(MultipartFile multipartFile) {
-    return new IOUploadHandler(multipartFile);
+  public static IOUploadHandler upload(InputStream inputStream) {
+    return new IOUploadHandler(inputStream);
   }
 
   public static OssUploadHandler uploadToOss() {
@@ -148,4 +103,12 @@ public class FileTool {
   public static IOFormatHandler format() {
     return new IOFormatHandler();
   }
+
+//  public static void main(String[] args) throws Exception {
+//    final Pattern URL_PATTERN = Pattern.compile("^[a-z]+:.*");
+//    String url = "https://192.168.1.35:3090/media/thumbnail/picture/20240118043912_thumbnail_20240118043912_DJI_0244.jpg";
+//    System.out.println(url.substring(0, 10));
+//    System.out.println(URL_PATTERN.matcher(url.substring(0, 10).trim()).matches());
+//    System.out.println(Pattern.matches("^[a-z]+:.*", "https://123.123.123.123"));
+//  }
 }

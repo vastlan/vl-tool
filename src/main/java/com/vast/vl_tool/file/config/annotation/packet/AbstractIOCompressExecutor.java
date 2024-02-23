@@ -7,6 +7,7 @@ package com.vast.vl_tool.file.config.annotation.packet;
  */
 
 public abstract class AbstractIOCompressExecutor extends AbstractIOPacketExecutor {
+
   public AbstractIOCompressExecutor(Object fileContent, String targetPath) {
     super(fileContent, targetPath);
   }

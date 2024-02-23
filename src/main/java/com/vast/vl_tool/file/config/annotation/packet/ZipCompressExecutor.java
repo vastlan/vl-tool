@@ -1,6 +1,7 @@
 package com.vast.vl_tool.file.config.annotation.packet;
 
 import com.vast.vl_tool.exception.AssertTool;
+import com.vast.vl_tool.file.constant.FileExtension;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.time.DateTool;
 import org.springframework.util.Assert;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -29,9 +31,34 @@ public class ZipCompressExecutor extends AbstractIOCompressExecutor {
 
   private List<FileBody> fileBodyList;
 
+  private String fileName = DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss");
+  private String fileExtensionName = FileExtension.ZIP.name().toLowerCase(Locale.ROOT);
+
   public ZipCompressExecutor(List<FileBody> fileBodyList, String targetPath) {
     super(fileBodyList, targetPath);
     this.fileBodyList = fileBodyList;
+  }
+
+  public ZipCompressExecutor(List<FileBody> fileBodyList, String targetPath, String fileName) {
+    super(fileBodyList, targetPath);
+    this.fileBodyList = fileBodyList;
+
+    if (StringUtils.hasLength(fileName)) {
+      this.fileName = fileName;
+    }
+  }
+
+  public ZipCompressExecutor(List<FileBody> fileBodyList, String targetPath, String fileName, String fileExtensionName) {
+    super(fileBodyList, targetPath);
+    this.fileBodyList = fileBodyList;
+
+    if (StringUtils.hasLength(fileName)) {
+      this.fileName = fileName;
+    }
+
+    if (StringUtils.hasLength(fileExtensionName)) {
+      this.fileExtensionName = fileExtensionName;
+    }
   }
 
   @Override
@@ -45,7 +72,7 @@ public class ZipCompressExecutor extends AbstractIOCompressExecutor {
 
   @Override
   public void execute() throws IOException {
-    String zipFileName = String.format("%s/%s.zip", targetPath, DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"));
+    String zipFileName = String.format("%s/%s.%s", targetPath, fileName, fileExtensionName);
 
     Path path = Paths.get(zipFileName);
     path = Files.createFile(path);
@@ -59,8 +86,7 @@ public class ZipCompressExecutor extends AbstractIOCompressExecutor {
     }
 
     fileBodyList.clear();
-    fileBodyList.add(FileBody.create(zipFileName));
-    setActionSuccessfulResult(fileBodyList);
+    setActionSuccessfulResult(FileBody.create(zipFileName));
   }
 
   private void compressFiles(ZipOutputStream zipOutputStream, Path fileSource, String fileName) throws IOException {

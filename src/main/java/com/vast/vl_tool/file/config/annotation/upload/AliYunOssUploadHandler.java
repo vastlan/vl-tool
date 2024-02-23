@@ -141,6 +141,7 @@ public class AliYunOssUploadHandler extends AbstractIOHandler<FileBody> {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(contentType);
         objectMetadata.setContentDisposition("inline");
+        putObjectRequest.setMetadata(objectMetadata);
       }
 
       // 设置该属性可以返回response。如果不设置，则返回的response为空。

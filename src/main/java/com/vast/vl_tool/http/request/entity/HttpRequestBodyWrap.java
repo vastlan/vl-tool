@@ -4,6 +4,7 @@ import com.vast.vl_tool.http.request.annotaion.HttpProcessorAdepter;
 import com.vast.vl_tool.http.request.annotaion.HttpRequestProcessor;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
 import java.util.Set;
@@ -37,11 +38,14 @@ public class HttpRequestBodyWrap {
     createAndApply(jsonHttpRequestBody);
 
     param.keySet().stream().forEach(key -> jsonHttpRequestBody.put(key, param.get(key)));
+    httpRequestContent.setBody(jsonHttpRequestBody);
     return jsonHttpRequestBody;
   }
 
   public JsonHttpRequestObjectBody json(Object param) {
     JsonHttpRequestObjectBody jsonHttpRequestBody = new JsonHttpRequestObjectBody(param);
+    createAndApply(jsonHttpRequestBody);
+    httpRequestContent.setBody(jsonHttpRequestBody);
     return jsonHttpRequestBody;
   }
 
@@ -50,6 +54,16 @@ public class HttpRequestBodyWrap {
     createAndApply(formDataHttpRequestBody);
     httpRequestContent.setBody(formDataHttpRequestBody);
     httpRequestContent.setMediaType(String.valueOf(MediaType.MULTIPART_FORM_DATA));
+    return formDataHttpRequestBody;
+  }
+
+  public FormDataHttpRequestBody formData(MultiValueMap<String, Object> formDataParam) {
+    FormDataHttpRequestBody formDataHttpRequestBody = new FormDataHttpRequestBody();
+    createAndApply(formDataHttpRequestBody);
+    httpRequestContent.setBody(formDataHttpRequestBody);
+    httpRequestContent.setMediaType(String.valueOf(MediaType.MULTIPART_FORM_DATA));
+
+    formDataParam.keySet().stream().forEach(key -> formDataHttpRequestBody.put(key, formDataParam.get(key)));
     return formDataHttpRequestBody;
   }
 

@@ -3,6 +3,7 @@ package com.vast.vl_tool.file.entity;
 import com.vast.vl_tool.file.FileTool;
 import lombok.*;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ import java.nio.file.Paths;
 @Setter
 @ToString
 @NoArgsConstructor
-public class FileBody {
+public class FileBody implements Closeable {
 
   private Path path;
 
@@ -83,7 +84,7 @@ public class FileBody {
   }
 
   public boolean isFile() {
-    return this.fileSuffix != null && this.fileSuffix.length() > 0;
+    return FileTool.isFile(this);
   }
 
   private void init() {
@@ -123,5 +124,25 @@ public class FileBody {
     }
 
     return inputStream;
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (inputStream != null) {
+      inputStream.close();
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "FileBody{" +
+      "path=" + path +
+      ", file=" + file +
+      ", fileAbsolutePath='" + fileAbsolutePath + '\'' +
+      ", pathRoot='" + pathRoot + '\'' +
+      ", fileRelativePath='" + fileRelativePath + '\'' +
+      ", fileName='" + fileName + '\'' +
+      ", fileSuffix='" + fileSuffix + '\'' +
+      '}';
   }
 }

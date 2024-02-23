@@ -61,21 +61,13 @@ public class PictureGrabExecutor extends AbstractIOGrabExecutor {
       FileTool.create().createFile(thumbnailFileBody).invoke();
     }
 
-    FileOutputStream fileOutputStream = null;
-
-    try {
-      fileOutputStream = new FileOutputStream(thumbnailFileBody.getFile());
-
+    try (FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFileBody.getFile())) {
       Thumbnails.of(fileBody.getFile())
         .scale(scale)
         .outputQuality(outputQuality)
         .toOutputStream(fileOutputStream);
 
       setGrabResult(thumbnailFileBody);
-    } finally {
-      if (fileOutputStream != null) {
-        fileOutputStream.close();
-      }
     }
   }
 }

@@ -3,11 +3,22 @@ package com.vast.vl_tool.http.request.annotaion;
 import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.http.HttpTool;
 import com.vast.vl_tool.http.request.entity.HttpRequestContent;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,6 +48,10 @@ public class RestTemplateHttpRequestSender extends AbstractHttpRequestSender<Htt
   @Override
   public HttpRequestContent handle() throws Exception {
 
+    SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+    factory.setBufferRequestBody(false);
+    REST_TEMPLATE.setRequestFactory(factory);
+
     HttpRequestContent.Response response = httpRequestContent.getResponse();
 
     HttpHeaders headers = new HttpHeaders();
@@ -49,7 +64,7 @@ public class RestTemplateHttpRequestSender extends AbstractHttpRequestSender<Htt
       while (iterator.hasNext()) {
         Map.Entry<String, Object> next = iterator.next();
 
-        headers.add(next.getKey(), next.getValue().toString());
+        headers.add(next.getKey(), String.valueOf(next.getValue()));
       }
     }
 

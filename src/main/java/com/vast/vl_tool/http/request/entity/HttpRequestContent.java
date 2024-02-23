@@ -2,6 +2,7 @@ package com.vast.vl_tool.http.request.entity;
 
 import com.vast.vl_tool.http.constant.HttpRequestMethod;
 import com.vast.vl_tool.http.request.annotaion.HttpRequestBody;
+import com.vast.vl_tool.http.request.annotaion.RequestBody;
 import lombok.*;
 
 /**
@@ -25,7 +26,7 @@ public class HttpRequestContent {
 
   private HttpRequestHeader header;
 
-  private HttpRequestBody body;
+  private RequestBody body;
 
   private Response response = new Response();
 

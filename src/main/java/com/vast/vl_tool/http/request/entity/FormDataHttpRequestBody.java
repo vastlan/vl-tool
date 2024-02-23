@@ -6,6 +6,9 @@ import com.vast.vl_tool.http.request.annotaion.HttpRequestProcessor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * @author vastlan
  * @description
@@ -13,16 +16,27 @@ import org.springframework.util.MultiValueMap;
  */
 public class FormDataHttpRequestBody extends HttpProcessorAdepter<HttpRequestProcessor> implements HttpRequestBody<MultiValueMap<String, Object>> {
 
-  private final MultiValueMap<String, Object> PARAM_MAP = new LinkedMultiValueMap<>();
+  private MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<>();
 
   @Override
   public MultiValueMap<String, Object> body() {
-    return PARAM_MAP;
+    return paramMap;
   }
 
   @Override
   public FormDataHttpRequestBody put(String key, Object value) {
-    PARAM_MAP.add(key, value);
+    if (value instanceof Collection) {
+      paramMap.addAll(key, (List<?>) value);
+    } else {
+      paramMap.add(key, value);
+    }
+
+    return this;
+  }
+
+  @Override
+  public HttpRequestBody setBody(MultiValueMap<String, Object> stringObjectMultiValueMap) {
+    this.paramMap = stringObjectMultiValueMap;
     return this;
   }
 }

@@ -1,5 +1,6 @@
 package com.vast.vl_tool.file.entity;
 
+import com.vast.vl_tool.file.constant.FileType;
 import lombok.*;
 
 /**
@@ -21,8 +22,10 @@ public class ExifFileBody {
 
   private Double longitude;
 
+  private FileType fileType = FileType.UNKNOWN;
+
   public static ExifFileBody create(FileBody fileBody, Double latitude, Double longitude) {
-    return new ExifFileBody(fileBody, latitude, longitude);
+    return new ExifFileBody(fileBody, latitude, longitude, FileType.UNKNOWN);
   }
 
   public static ExifFileBody create(FileBody fileBody) {

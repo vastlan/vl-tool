@@ -4,7 +4,10 @@ import com.vast.vl_tool.file.entity.ExifFileBody;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Base64;
 
 /**
  * @author vastlan
@@ -15,8 +18,8 @@ public class IOFormatHandler extends AbstractIOHandler<Object> {
 
   private IOFormatExecutor ioFormatExecutor;
 
-  public IOFormatHandler content(FileBody fileBody) {
-    setBody(fileBody);
+  public IOFormatHandler content(InputStream inputStream) {
+    setBody(new FileBody(inputStream));
     return this;
   }
 
@@ -28,6 +31,27 @@ public class IOFormatHandler extends AbstractIOHandler<Object> {
     ExifFileBody exifFileBody = ExifFileBody.create(fileBody);
     ioFormatExecutor = new FormatToEXIFExecutor(exifFileBody);
     return this;
+  }
+
+  public String toBase64(InputStream inputStream) {
+    try {
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+      int bytesRead;
+      byte[] buffer = new byte[8192]; // Smaller buffer size for less memory usage
+
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+        outputStream.write(buffer, 0, bytesRead);
+      }
+
+      inputStream.close();
+
+      return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
   @Override
