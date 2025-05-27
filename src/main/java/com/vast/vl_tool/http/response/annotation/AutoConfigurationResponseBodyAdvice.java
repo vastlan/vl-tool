@@ -3,8 +3,8 @@ package com.vast.vl_tool.http.response.annotation;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * @author vastlan

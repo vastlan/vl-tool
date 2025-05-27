@@ -8,30 +8,11 @@ import com.vast.vl_tool.file.config.annotation.packet.IOPacketHandler;
 import com.vast.vl_tool.file.config.annotation.upload.IOUploadHandler;
 import com.vast.vl_tool.file.config.annotation.upload.OssUploadHandler;
 import com.vast.vl_tool.file.entity.FileBody;
-import com.vast.vl_tool.time.DateTool;
-import org.bytedeco.ffmpeg.global.avcodec;
-import org.bytedeco.javacv.*;
-import org.bytedeco.javacv.Frame;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
 
 /**
  * @author vastlan

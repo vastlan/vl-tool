@@ -1,11 +1,11 @@
 package com.vast.vl_tool.file.config.annotation.download;
 
-import com.drew.lang.StringUtil;
 import com.vast.vl_tool.file.entity.FileBody;
 import org.springframework.util.StringUtils;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;

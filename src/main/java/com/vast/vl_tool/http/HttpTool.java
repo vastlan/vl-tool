@@ -15,7 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletResponse;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
