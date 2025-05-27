@@ -3,6 +3,8 @@ package com.vast.vl_tool.file.entity;
 import com.vast.vl_tool.file.constant.FileType;
 import lombok.*;
 
+import java.util.Date;
+
 /**
  * @author vastlan
  * @description
@@ -22,10 +24,12 @@ public class ExifFileBody {
 
   private Double longitude;
 
+  private Date creationTime;
+
   private FileType fileType = FileType.UNKNOWN;
 
   public static ExifFileBody create(FileBody fileBody, Double latitude, Double longitude) {
-    return new ExifFileBody(fileBody, latitude, longitude, FileType.UNKNOWN);
+    return new ExifFileBody(fileBody, latitude, longitude, null, FileType.UNKNOWN);
   }
 
   public static ExifFileBody create(FileBody fileBody) {

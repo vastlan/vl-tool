@@ -26,6 +26,8 @@ public class IODownloadHandler extends AbstractIOHandler<Object> {
 
   private HttpServletResponse response;
 
+  private boolean withLocation = false;
+
   public IODownloadHandler(HttpServletResponse response) {
     this.response = response;
   }
@@ -45,13 +47,18 @@ public class IODownloadHandler extends AbstractIOHandler<Object> {
 
   public IODownloadHandler multiContent(List<FileBody> fileBodyList) {
     setBody(fileBodyList);
-    ioDownloadExecutor = new MultiFileDownloadExecutor(response, fileBodyList);
+    ioDownloadExecutor = new MultiFileDownloadExecutor(response, fileBodyList, withLocation);
     return this;
   }
 
   public IODownloadHandler content(FileBody fileBody) {
     setBody(fileBody);
-    ioDownloadExecutor = new OneFileDownloadExecutor(response, fileBody);
+    ioDownloadExecutor = new OneFileDownloadExecutor(response, fileBody, withLocation);
+    return this;
+  }
+
+  public IODownloadHandler withLocation() {
+    this.withLocation = true;
     return this;
   }
 

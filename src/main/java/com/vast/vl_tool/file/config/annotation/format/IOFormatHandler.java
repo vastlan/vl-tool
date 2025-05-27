@@ -1,8 +1,10 @@
 package com.vast.vl_tool.file.config.annotation.format;
 
+import com.vast.vl_tool.file.constant.FileType;
 import com.vast.vl_tool.file.entity.ExifFileBody;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.config.annotation.AbstractIOHandler;
+import kotlin.jvm.internal.PackageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class IOFormatHandler extends AbstractIOHandler<Object> {
 
   private IOFormatExecutor ioFormatExecutor;
 
+  private FileType fileType = FileType.PICTURE;
+
   public IOFormatHandler content(InputStream inputStream) {
     setBody(new FileBody(inputStream));
     return this;
@@ -29,7 +33,17 @@ public class IOFormatHandler extends AbstractIOHandler<Object> {
 
   public IOFormatHandler toEXIF(FileBody fileBody) {
     ExifFileBody exifFileBody = ExifFileBody.create(fileBody);
-    ioFormatExecutor = new FormatToEXIFExecutor(exifFileBody);
+    ioFormatExecutor = new FormatToEXIFExecutor(exifFileBody, fileType);
+    return this;
+  }
+
+  public IOFormatHandler video() {
+    fileType = FileType.VIDEO;
+    return this;
+  }
+
+  public IOFormatHandler picture() {
+    fileType = FileType.PICTURE;
     return this;
   }
 

@@ -107,39 +107,40 @@ public class VideoGrabExecutor extends AbstractIOGrabExecutor {
 
       Assert.notNull(grabbedFrame, "grabbed frame cannot be null");
 
-      Java2DFrameConverter frameConverter = new Java2DFrameConverter();
-      BufferedImage frameBufferedImage = frameConverter.getBufferedImage(grabbedFrame);
-      int frameImagePrimaryWidth = frameBufferedImage.getWidth();
-      int frameImagePrimaryHeight = frameBufferedImage.getHeight();
+      try (Java2DFrameConverter frameConverter = new Java2DFrameConverter()) {
+        BufferedImage frameBufferedImage = frameConverter.getBufferedImage(grabbedFrame);
+        int frameImagePrimaryWidth = frameBufferedImage.getWidth();
+        int frameImagePrimaryHeight = frameBufferedImage.getHeight();
 
-      int thumbnailWidth = (int) Math.floor(frameImagePrimaryWidth * width);
-      int thumbnailHeight = (int) Math.floor(frameImagePrimaryHeight * height);
+        int thumbnailWidth = (int) Math.floor(frameImagePrimaryWidth * width);
+        int thumbnailHeight = (int) Math.floor(frameImagePrimaryHeight * height);
 
-      BufferedImage thumbnailBufferedImage = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_3BYTE_BGR);
-      thumbnailBufferedImage
-        .getGraphics()
-        .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, hints), 0, 0, null);
+        BufferedImage thumbnailBufferedImage = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_3BYTE_BGR);
+        thumbnailBufferedImage
+          .getGraphics()
+          .drawImage(frameBufferedImage.getScaledInstance(thumbnailWidth, thumbnailHeight, hints), 0, 0, null);
 
-      FileBody targetFileBody = FileBody.create(targetPath);
+        FileBody targetFileBody = FileBody.create(targetPath);
 
-      if (!targetFileBody.isFile()) {
-        String videoFileName = this.fileBody.getFileName();
+        if (!targetFileBody.isFile()) {
+          String videoFileName = this.fileBody.getFileName();
 
-        if (!StringUtils.hasLength(grabbedFileName)) {
-          grabbedFileName(String.format("%s_thumbnail_%s_%d", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), videoFileName.substring(0, videoFileName.lastIndexOf(".")), frameNumber));
+          if (!StringUtils.hasLength(grabbedFileName)) {
+            grabbedFileName(String.format("%s_thumbnail_%s_%d", DateTool.getFormattedCurrentDateTime("yyyyMMddHHmmss"), videoFileName.substring(0, videoFileName.lastIndexOf(".")), frameNumber));
+          }
+
+          targetFileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
         }
 
-        targetFileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
+        FileBody thumbnailFileBody =
+          FileTool.create()
+            .createFile(targetFileBody)
+            .invoke();
+
+        ImageIO.write(thumbnailBufferedImage, "jpg", thumbnailFileBody.getFile());
+
+        setGrabResult(thumbnailFileBody);
       }
-
-      FileBody thumbnailFileBody =
-        FileTool.create()
-          .createFile(targetFileBody)
-          .invoke();
-
-      ImageIO.write(thumbnailBufferedImage, "jpg", thumbnailFileBody.getFile());
-
-      setGrabResult(thumbnailFileBody);
 
     } finally {
       try {

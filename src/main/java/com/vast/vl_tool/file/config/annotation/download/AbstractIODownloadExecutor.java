@@ -23,6 +23,8 @@ public abstract class AbstractIODownloadExecutor extends AbstractIOExecutor impl
 
   protected String fileNameSuffix;
 
+  protected boolean withLocation = false;
+
   public AbstractIODownloadExecutor(HttpServletResponse response, Object content, String fileName) {
     this.response = response;
     this.content = content;

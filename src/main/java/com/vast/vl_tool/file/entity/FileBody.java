@@ -39,6 +39,12 @@ public class FileBody implements Closeable {
 
   private InputStream inputStream;
 
+  private String longitude;
+
+  private String latitude;
+
+  private String altitude;
+
   public FileBody(Path path) {
     this.path = path;
     this.file = path.toFile();

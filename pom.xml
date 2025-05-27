@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vast</groupId>
     <artifactId>vl-tool</artifactId>
-    <version>1.2.32</version>
+    <version>1.2.40</version>
     <name>vl-tool</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -22,12 +22,12 @@
         <repository>
             <id>releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://192.168.1.167:8081/repository/maven-releases/</url>
+            <url>http://192.168.1.161:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://192.168.1.167:8081/repository/maven-snapshots/</url>
+            <url>http://192.168.1.161:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -193,38 +193,8 @@
 <!--        </dependency>-->
     </dependencies>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>osgeo</id>-->
-<!--            <name>OSGeo Release Repository</name>-->
-<!--            <url>https://repo.osgeo.org/repository/release/</url>-->
-<!--            <snapshots><enabled>false</enabled></snapshots>-->
-<!--            <releases><enabled>true</enabled></releases>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>osgeo-snapshot</id>-->
-<!--            <name>OSGeo Snapshot Repository</name>-->
-<!--            <url>https://repo.osgeo.org/repository/snapshot/</url>-->
-<!--            <snapshots><enabled>true</enabled></snapshots>-->
-<!--            <releases><enabled>false</enabled></releases>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <excludes>-->
-<!--                        <exclude>-->
-<!--                            <groupId>org.projectlombok</groupId>-->
-<!--                            <artifactId>lombok</artifactId>-->
-<!--                        </exclude>-->
-<!--                    </excludes>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

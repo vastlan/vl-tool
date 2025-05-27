@@ -9,14 +9,29 @@ import com.vast.vl_tool.file.config.annotation.upload.IOUploadHandler;
 import com.vast.vl_tool.file.config.annotation.upload.OssUploadHandler;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.time.DateTool;
+import org.bytedeco.ffmpeg.global.avcodec;
+import org.bytedeco.javacv.*;
+import org.bytedeco.javacv.Frame;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.regex.Pattern;
+import java.time.ZoneId;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  * @author vastlan
@@ -103,12 +118,4 @@ public class FileTool {
   public static IOFormatHandler format() {
     return new IOFormatHandler();
   }
-
-//  public static void main(String[] args) throws Exception {
-//    final Pattern URL_PATTERN = Pattern.compile("^[a-z]+:.*");
-//    String url = "https://192.168.1.35:3090/media/thumbnail/picture/20240118043912_thumbnail_20240118043912_DJI_0244.jpg";
-//    System.out.println(url.substring(0, 10));
-//    System.out.println(URL_PATTERN.matcher(url.substring(0, 10).trim()).matches());
-//    System.out.println(Pattern.matches("^[a-z]+:.*", "https://123.123.123.123"));
-//  }
 }

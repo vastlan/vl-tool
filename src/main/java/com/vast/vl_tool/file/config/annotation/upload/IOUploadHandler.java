@@ -65,6 +65,10 @@ public class IOUploadHandler extends AbstractIOHandler<FileBody> {
 
     inputStream.transferTo(Files.newOutputStream(body.getPath()));
 
+    if (inputStream != null) {
+      inputStream.close();
+    }
+
     return body;
   }
 
@@ -88,6 +92,10 @@ public class IOUploadHandler extends AbstractIOHandler<FileBody> {
     newFileBody = FileTool.create().createFile(newFileBody).invoke();
 
     inputStream.transferTo(Files.newOutputStream(newFileBody.getPath()));
+
+    if (inputStream != null) {
+      inputStream.close();
+    }
 
     return newFileBody;
   }
