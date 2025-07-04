@@ -21,16 +21,16 @@ import java.util.stream.Collectors;
  */
 public class BusinessFileUtils {
 
-  public static void main(String[] args) throws Exception {
+//  public static void main(String[] args) throws Exception {
 //      createBusinessFiles(
-//      "D:\\my-workspace\\electric_fowl\\server\\electric-fowl\\new-village\\src\\main\\java\\com\\vast\\new_village\\entity\\persistent",
-//      "D:\\my-workspace\\electric_fowl\\server\\electric-fowl\\new-village\\src\\main\\java\\com\\vast\\new_village\\repository",
-//      "D:\\my-workspace\\electric_fowl\\server\\electric-fowl\\new-village\\src\\main\\java\\com\\vast\\new_village\\service",
+//      "D:\\my-workspace\\wukong\\server\\eagle-cloud-plus\\project\\src\\main\\java\\com\\cnqisoft\\project\\entity\\management",
+//      "D:\\my-workspace\\wukong\\server\\eagle-cloud-plus\\project\\src\\main\\java\\com\\cnqisoft\\project\\repository",
+//      "D:\\my-workspace\\wukong\\server\\eagle-cloud-plus\\project\\src\\main\\java\\com\\cnqisoft\\project\\service",
 //      null,
 //      null,
-//      "com.vast.new_village"
+//      "com.cnqisoft.project"
 //    );
-  }
+//  }
 
   public static void createBusinessFiles() {
     String[] ignoreRepositoryFile = {"MotorCadeDetail"};
