@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.vast</groupId>
     <artifactId>vl-tool</artifactId>
-    <version>1.2.40</version>
+    <version>1.2.41</version>
     <name>vl-tool</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -150,6 +150,12 @@
             <artifactId>minio</artifactId>
             <version>8.4.3</version>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.6tail</groupId>
+            <artifactId>lunar</artifactId>
+            <version>1.7.4</version>
         </dependency>
 
 <!--        &lt;!&ndash; 读取excel &ndash;&gt;-->

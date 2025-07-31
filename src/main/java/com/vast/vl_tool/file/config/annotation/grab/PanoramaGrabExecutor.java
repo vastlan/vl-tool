@@ -4,7 +4,7 @@ import com.vast.vl_tool.exception.AssertTool;
 import com.vast.vl_tool.file.entity.FileBody;
 import com.vast.vl_tool.file.FileTool;
 import com.vast.vl_tool.http.HttpTool;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+//import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import okhttp3.ResponseBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,99 +54,99 @@ public class PanoramaGrabExecutor extends AbstractIOGrabExecutor {
 
   @Override
   public void execute() throws IOException {
-    String thumbUrl;
-    Integer sceneId;
-
-    try {
-      Document doc = Jsoup.connect(url).get();
-
-      String scriptContent =
-        doc
-          .getElementsByClass("script").get(0)
-          .getElementsByTag("script").get(0)
-          .childNodes().get(0)
-          .toString()
-          .replace("window.", "var");
-
-      URL connectionUrl = new URL(this.url);
-      String query = connectionUrl.getQuery();
-      sceneId = query != null ? Integer.valueOf(query.split("=")[1]) : 0;
-
-      ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) SCRIPT_ENGINE.eval(scriptContent);
-      ScriptObjectMirror data = (ScriptObjectMirror) scriptObjectMirror.get("data");
-      ScriptObjectMirror product = (ScriptObjectMirror) data.get("product");
-      ScriptObjectMirror config = (ScriptObjectMirror) product.get("config");
-      ScriptObjectMirror category = (ScriptObjectMirror) config.get("category");
-      ScriptObjectMirror groups = (ScriptObjectMirror) category.get("groups");
-      ScriptObjectMirror property = (ScriptObjectMirror) product.get("property");
-
-      thumbUrl = IMAGE_HOST + property.get("thumbUrl");
-
-      String panoramaName = "";
-
-      Collection<Object> groupList = groups == null ? category.values() : groups.values();
-
-      for (Object group : groupList) {
-
-        ScriptObjectMirror scenes = (ScriptObjectMirror) ((ScriptObjectMirror) group).get("scenes");
-        Collection<Object> sceneList = scenes.values();
-
-        for (Object scene : sceneList) {
-
-          Integer id = (Integer) ((ScriptObjectMirror) scene).get("id");
-
-          if (id.equals(sceneId)) {
-            thumbUrl = IMAGE_HOST + ((ScriptObjectMirror) scene).get("thumb");
-            panoramaName = (String) ((ScriptObjectMirror) scene).get("name");
-          }
-
-        }
-      }
-
-      ResponseBody mediaResponseBody = null;
-
-      try {
-        // @formatter:off
-        mediaResponseBody =
-          HttpTool.createRequest()
-            .url(thumbUrl)
-            .method()
-              .get()
-          .and()
-            .okHttp()
-            .sendForInputStream();
-        // @formatter:on
-
-        if (mediaResponseBody == null) {
-          throw new IOException("获取截取源失败");
-        }
-
-        FileBody fileBody = FileBody.create(targetPath);
-
-        if (!fileBody.isFile()) {
-          fileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
-        }
-
-        if (fileBody.notExistAndIsFile()) {
-          FileTool.create().createFile(fileBody).invoke();
-        }
-
-        BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), width, height);
-        ImageIO.write(bufferedImage, "jpg", fileBody.getFile());
-
-        setGrabResult(fileBody);
-      } finally {
-        if (mediaResponseBody != null) {
-          if (mediaResponseBody.byteStream() != null) {
-            mediaResponseBody.byteStream().close();
-          }
-
-          mediaResponseBody.close();
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+//    String thumbUrl;
+//    Integer sceneId;
+//
+//    try {
+//      Document doc = Jsoup.connect(url).get();
+//
+//      String scriptContent =
+//        doc
+//          .getElementsByClass("script").get(0)
+//          .getElementsByTag("script").get(0)
+//          .childNodes().get(0)
+//          .toString()
+//          .replace("window.", "var");
+//
+//      URL connectionUrl = new URL(this.url);
+//      String query = connectionUrl.getQuery();
+//      sceneId = query != null ? Integer.valueOf(query.split("=")[1]) : 0;
+//
+//      ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) SCRIPT_ENGINE.eval(scriptContent);
+//      ScriptObjectMirror data = (ScriptObjectMirror) scriptObjectMirror.get("data");
+//      ScriptObjectMirror product = (ScriptObjectMirror) data.get("product");
+//      ScriptObjectMirror config = (ScriptObjectMirror) product.get("config");
+//      ScriptObjectMirror category = (ScriptObjectMirror) config.get("category");
+//      ScriptObjectMirror groups = (ScriptObjectMirror) category.get("groups");
+//      ScriptObjectMirror property = (ScriptObjectMirror) product.get("property");
+//
+//      thumbUrl = IMAGE_HOST + property.get("thumbUrl");
+//
+//      String panoramaName = "";
+//
+//      Collection<Object> groupList = groups == null ? category.values() : groups.values();
+//
+//      for (Object group : groupList) {
+//
+//        ScriptObjectMirror scenes = (ScriptObjectMirror) ((ScriptObjectMirror) group).get("scenes");
+//        Collection<Object> sceneList = scenes.values();
+//
+//        for (Object scene : sceneList) {
+//
+//          Integer id = (Integer) ((ScriptObjectMirror) scene).get("id");
+//
+//          if (id.equals(sceneId)) {
+//            thumbUrl = IMAGE_HOST + ((ScriptObjectMirror) scene).get("thumb");
+//            panoramaName = (String) ((ScriptObjectMirror) scene).get("name");
+//          }
+//
+//        }
+//      }
+//
+//      ResponseBody mediaResponseBody = null;
+//
+//      try {
+//        // @formatter:off
+//        mediaResponseBody =
+//          HttpTool.createRequest()
+//            .url(thumbUrl)
+//            .method()
+//              .get()
+//          .and()
+//            .okHttp()
+//            .sendForInputStream();
+//        // @formatter:on
+//
+//        if (mediaResponseBody == null) {
+//          throw new IOException("获取截取源失败");
+//        }
+//
+//        FileBody fileBody = FileBody.create(targetPath);
+//
+//        if (!fileBody.isFile()) {
+//          fileBody = FileBody.create(targetPath + File.separator + getGrabbedFileName());
+//        }
+//
+//        if (fileBody.notExistAndIsFile()) {
+//          FileTool.create().createFile(fileBody).invoke();
+//        }
+//
+//        BufferedImage bufferedImage = generateThumbnail(mediaResponseBody.byteStream(), width, height);
+//        ImageIO.write(bufferedImage, "jpg", fileBody.getFile());
+//
+//        setGrabResult(fileBody);
+//      } finally {
+//        if (mediaResponseBody != null) {
+//          if (mediaResponseBody.byteStream() != null) {
+//            mediaResponseBody.byteStream().close();
+//          }
+//
+//          mediaResponseBody.close();
+//        }
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
   }
 
   @Override
